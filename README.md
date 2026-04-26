@@ -2,142 +2,86 @@
 
 > 취업 정보를 넘어서, **기업을 데이터로 평가하고 AI로 연결하는 플랫폼**
 
----
-
 ## 📌 프로젝트 소개
 
-본 프로젝트는 장애인과 청년을 위한 **AI 기반 취업 의사결정 플랫폼**입니다.  
+본 프로젝트는 장애인과 청년을 위한 **AI 기반 취업 의사결정 플랫폼**입니다.
 
-기존 구인 서비스는 단순 채용 정보 제공에 그치지만,  
-우리는 공공데이터를 활용하여 **기업의 장애 친화도를 정량화하고**,  
-AI를 통해 **사용자에게 가장 적합한 일자리와 기업을 연결**합니다.  
+- 공공데이터 기반으로 기업의 장애 친화도 점수를 계산
+- 사용자에게 적합한 일자리와 기업 추천
+- 고용주에게 장애인 채용 지원금/혜택 안내
 
-또한 고용주에게는 **지원금 및 혜택을 자동으로 안내**하여  
-실제 채용까지 이어지는 구조를 만듭니다.
+현재는 **초기 개발 환경 세팅 + mock 데이터 기반 MVP** 단계이며,  
+아직 실제 공공데이터 API 연동은 진행하지 않았습니다.
 
----
+## 📂 모노레포 구조
 
-## 🎯 기획 배경
+```text
+/
+├── frontend/   # Next.js (App Router, TypeScript, Tailwind)
+├── backend/    # FastAPI (routers/services/schemas)
+├── data/       # mock JSON 데이터
+├── docs/       # 기획/데이터/API 문서
+├── README.md
+└── .gitignore
+```
 
-- 장애인 및 청년 구직자는 적합한 일자리를 찾기 어려움  
-- 기업은 장애인 채용 시 받을 수 있는 혜택을 제대로 활용하지 못함  
-- 기존 플랫폼은 정보 제공 중심으로 **의사결정 지원이 부족함**
+## 🖥️ Frontend 실행 방법
 
-👉 우리는 이 문제를 해결하기 위해  
-**“데이터 기반 취업 + 기업 평가 + AI 자동화”**를 결합했습니다.
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
----
+- 기본 주소: `http://localhost:3000`
+- mock 데이터를 사용해 메인 화면, 기업 리스트, 점수 카드, 추천 일자리 카드가 표시됩니다.
 
-## 💡 핵심 기능
+## ⚙️ Backend 실행 방법
 
-### 1️⃣ AI 초간편 지원 시스템
-- 채팅 또는 음성 기반 입력
-- AI가 자동으로 이력서 생성
-- 복잡한 절차 없이 빠른 지원
+```bash
+cd backend
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# macOS/Linux
+# source .venv/bin/activate
 
----
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
 
-### 2️⃣ 맞춤형 일자리 추천
-- 사용자 정보 + 위치 기반 추천
-- 장애 유형 및 선호 반영
+- 기본 주소: `http://localhost:8000`
+- 제공 엔드포인트:
+  - `GET /health`
+  - `GET /companies`
+  - `GET /jobs`
+  - `GET /supports`
 
----
+## 🗂️ data 폴더 설명
 
-### 3️⃣ 🏆 기업 장애 친화도 점수
-- 공공데이터 기반 점수 산출
-  - 장애인 고용률
-  - 근속률
-  - 직무 다양성
-- 기업 비교 기능 제공
+`data` 폴더는 백엔드와 프론트에서 공통으로 참고 가능한 mock 원천 데이터입니다.
 
-> “이 기업이 나에게 맞는지”를 데이터로 판단
+- `companies.json`: 기업 장애 친화도 관련 지표
+- `jobs.json`: 추천 일자리 정보
+- `supports.json`: 장애인 채용 지원금/혜택 정보
 
----
+## 🧾 docs 폴더 문서
 
-### 4️⃣ 💰 고용주 지원금 자동 계산 (핵심 차별화🔥)
-- 장애인 채용 시 받을 수 있는 혜택 자동 안내
-- AI가 실시간으로 지원금 계산
+- `docs/planning.md`: 기획 배경 및 MVP 목표
+- `docs/data-plan.md`: 데이터 활용 계획 및 확장 포인트
+- `docs/api-spec.md`: API 명세 초안
 
-> “이 지원자를 채용하면 월 XX만원 지원”
+## 🛠️ 현재 기술 스택
 
-👉 기업의 실제 채용 유도
+- Frontend: Next.js, TypeScript, Tailwind CSS
+- Backend: FastAPI, Pydantic
+- Data: JSON mock 데이터
 
----
+## 🚀 향후 확장 계획
 
-## 🧠 차별화 포인트
-
-- 단순 채용 플랫폼 ❌  
-- 데이터 기반 의사결정 플랫폼 ✅  
-
-✔ 기업을 평가하여 선택 가능  
-✔ AI로 지원 과정 최소화  
-✔ 기업과 구직자 모두를 고려한 구조  
-
----
-
-## 🛠️ 기술 스택
-
-### Frontend
-- Next.js  
-- Tailwind CSS  
-
-### Backend
-- FastAPI (or Spring)  
-
-### Database
-- PostgreSQL  
-
-### Data
-- 공공데이터포털 (data.go.kr)  
-- 한국장애인고용공단  
-- 한국고용정보원 (워크넷 API)  
-
----
-
-## 🏗️ 시스템 구조
-
-
-[공공데이터 / API]
-↓
-[데이터 가공 / 점수 계산 / AI 추천]
-↓
-[Backend API]
-↓
-[Frontend UI]
-
-
----
-
-## 📂 프로젝트 구조
-
-
-/frontend
-/backend
-/data
-/docs
-
-
----
-
-## 👥 팀원
-
-| 역할 | 이름 |
-|------|------|
-| FE | |
-| BE | |
-| PM | |
-| DESIGN | |
-
----
-
-## 🚀 향후 계획
-
-- AI 추천 정확도 고도화  
-- 사용자 피드백 기반 점수 개선  
-- 기업 평가 데이터 확장  
-- 실제 서비스 배포 및 검증  
-
----
+- PostgreSQL 연동
+- 공공데이터 API 수집/정규화 파이프라인
+- AI 기반 개인화 추천 로직 고도화
 
 ## 🔥 한 줄 컨셉
 
