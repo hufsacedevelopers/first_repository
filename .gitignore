@@ -17,9 +17,10 @@ __pycache__/
 venv/
 backend/.venv/
 
-# Environment files
+# Environment files — .env.example 파일은 커밋 대상입니다
 .env
-.env.*
+.env.local
+.env.*.local
 
 # IDE
 .vscode/

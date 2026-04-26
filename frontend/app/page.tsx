@@ -1,8 +1,10 @@
 import CompanyListSection from "@/components/CompanyListSection";
 import JobCard from "@/components/JobCard";
-import { companies, jobs } from "@/lib/mockData";
+import { getCompanies, getJobs } from "@/lib/data";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [companies, jobs] = await Promise.all([getCompanies(), getJobs()]);
+
   return (
     <main className="mx-auto min-h-screen max-w-6xl px-6 py-12">
       <section className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">

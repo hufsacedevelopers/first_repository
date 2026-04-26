@@ -21,9 +21,35 @@
 ├── backend/    # FastAPI (routers/services/schemas)
 ├── data/       # mock JSON 데이터
 ├── docs/       # 기획/데이터/API 문서
+├── package.json  # 루트 편의 스크립트
 ├── README.md
 └── .gitignore
 ```
+
+## ⚙️ 환경 변수 설정
+
+### Backend
+
+```bash
+cd backend
+cp .env.example .env   # .env 파일을 만들고 필요한 값을 채워주세요
+```
+
+| 변수 | 기본값 | 설명 |
+|------|--------|------|
+| `APP_ENV` | `development` | 실행 환경 |
+| `CORS_ORIGINS` | `["http://localhost:3000"]` | 허용할 프론트엔드 주소 |
+
+### Frontend
+
+```bash
+cd frontend
+cp .env.example .env.local
+```
+
+| 변수 | 기본값 | 설명 |
+|------|--------|------|
+| `NEXT_PUBLIC_API_URL` | (없음) | 비워두면 mock 데이터 사용, 값 입력 시 실제 백엔드 호출 |
 
 ## 🖥️ Frontend 실행 방법
 
@@ -34,13 +60,14 @@ npm run dev
 ```
 
 - 기본 주소: `http://localhost:3000`
-- mock 데이터를 사용해 메인 화면, 기업 리스트, 점수 카드, 추천 일자리 카드가 표시됩니다.
+- `NEXT_PUBLIC_API_URL` 미설정 시 mock 데이터로 동작합니다.
 
 ## ⚙️ Backend 실행 방법
 
 ```bash
 cd backend
 python -m venv .venv
+
 # Windows
 .venv\Scripts\activate
 # macOS/Linux
@@ -57,6 +84,21 @@ uvicorn app.main:app --reload
   - `GET /jobs`
   - `GET /supports`
 
+## 🧪 테스트 실행 (Backend)
+
+```bash
+cd backend
+pip install -r requirements-dev.txt
+pytest
+```
+
+## 🔍 린트 실행 (Backend)
+
+```bash
+cd backend
+ruff check .
+```
+
 ## 🗂️ data 폴더 설명
 
 `data` 폴더는 백엔드와 프론트에서 공통으로 참고 가능한 mock 원천 데이터입니다.
@@ -70,11 +112,12 @@ uvicorn app.main:app --reload
 - `docs/planning.md`: 기획 배경 및 MVP 목표
 - `docs/data-plan.md`: 데이터 활용 계획 및 확장 포인트
 - `docs/api-spec.md`: API 명세 초안
+- `docs/api-integration-guide.md`: 공공데이터 API 연동 가이드
 
 ## 🛠️ 현재 기술 스택
 
 - Frontend: Next.js, TypeScript, Tailwind CSS
-- Backend: FastAPI, Pydantic
+- Backend: FastAPI, Pydantic, pydantic-settings
 - Data: JSON mock 데이터
 
 ## 🚀 향후 확장 계획
@@ -85,4 +128,4 @@ uvicorn app.main:app --reload
 
 ## 🔥 한 줄 컨셉
 
-> “취업을 연결하는 것이 아니라, 선택할 수 있게 만든다”
+> "취업을 연결하는 것이 아니라, 선택할 수 있게 만든다"
