@@ -74,7 +74,7 @@ python -m venv .venv
 # source .venv/bin/activate
 
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 - 기본 주소: `http://localhost:8000`
@@ -83,6 +83,26 @@ uvicorn app.main:app --reload
   - `GET /companies`
   - `GET /jobs`
   - `GET /supports`
+  - `GET /supports/incentives/live`
+
+## 🚂 Railway 배포 (Backend)
+
+이 레포는 모노레포이므로 Railway 서비스의 **Root Directory를 `backend`** 로 설정하세요.
+
+1. Railway에서 GitHub 레포 연결
+2. 서비스 Root Directory를 `backend`로 지정
+3. 환경변수 등록
+   - `APP_ENV=production`
+   - `CORS_ORIGINS=["https://<your-frontend-domain>"]`
+   - `ODCLOUD_API_KEY=<your-key>`
+   - `ODCLOUD_BASE_URL=https://api.odcloud.kr/api`
+4. 배포 후 확인
+   - `/health`
+   - `/supports/incentives/live?year=2024&page=1&perPage=10`
+
+배포 설정 파일:
+- `backend/Procfile`
+- `backend/nixpacks.toml`
 
 ## 🧪 테스트 실행 (Backend)
 

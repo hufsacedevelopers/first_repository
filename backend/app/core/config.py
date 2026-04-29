@@ -15,6 +15,8 @@ class Settings(BaseSettings):
 
     app_env: str = "development"
     cors_origins: list[str] = ["http://localhost:3000"]
+    odcloud_base_url: str = "https://api.odcloud.kr/api"
+    odcloud_api_key: str = ""
 
 
 settings = Settings()
