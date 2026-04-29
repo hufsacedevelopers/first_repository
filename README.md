@@ -81,7 +81,10 @@ python -m uvicorn app.main:app --reload
 - 제공 엔드포인트:
   - `GET /health`
   - `GET /companies`
+  - `GET /companies/standard-workplaces/live`
   - `GET /jobs`
+  - `GET /jobs/live`
+  - `GET /jobs/live-with-env`
   - `GET /supports`
   - `GET /supports/incentives/live`
 
