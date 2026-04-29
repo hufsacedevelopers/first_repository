@@ -8,12 +8,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        page: "#f6f8fc",
         primary: {
-          50: "#f1f6ff",
-          100: "#dfeafd",
-          500: "#3b82f6",
+          50: "#eef6ff",
+          100: "#dbeafe",
+          500: "#2563eb",
           700: "#1d4ed8",
-          900: "#1e3a8a"
+          800: "#1e40af",
+          900: "#172554"
         }
       }
     }

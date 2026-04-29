@@ -1,40 +1,42 @@
 import CompanyListSection from "@/components/CompanyListSection";
-import JobCard from "@/components/JobCard";
+import HeroSection from "@/components/HeroSection";
+import JobsSection from "@/components/JobsSection";
+import SiteHeader from "@/components/SiteHeader";
+import StatsStrip from "@/components/StatsStrip";
+import SupportSection from "@/components/SupportSection";
 import { getCompanies, getJobs } from "@/lib/data";
 
 export default async function HomePage() {
   const [companies, jobs] = await Promise.all([getCompanies(), getJobs()]);
 
   return (
-    <main className="mx-auto min-h-screen max-w-6xl px-6 py-12">
-      <section className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-        <p className="text-sm font-semibold text-primary-700">공공서비스 MVP</p>
-        <h1 className="mt-2 text-3xl font-bold text-slate-900">
-          장애인 · 청년 맞춤형 취업 의사결정 플랫폼
-        </h1>
-        <p className="mt-4 max-w-3xl text-slate-600">
-          기업의 장애 친화도 데이터를 기반으로 더 적합한 일자리를 추천하고, 고용주에게는
-          활용 가능한 지원금 정보를 연결하기 위한 초기 개발 환경입니다.
-        </p>
-      </section>
+    <div className="min-h-screen bg-page">
+      <SiteHeader />
+      <main className="mx-auto max-w-6xl px-6 pb-16 pt-8">
+        <HeroSection />
 
-      <div className="mt-10">
-        <CompanyListSection companies={companies} />
-      </div>
+        <div className="mt-10">
+          <StatsStrip />
+        </div>
 
-      <section className="mt-12 space-y-4">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">추천 일자리</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            추후 AI 추천 로직이 들어갈 영역을 mock 데이터로 구성했습니다.
+        <div className="mt-16">
+          <CompanyListSection companies={companies} />
+        </div>
+
+        <div className="mt-20">
+          <JobsSection jobs={jobs} />
+        </div>
+
+        <div className="mt-20">
+          <SupportSection />
+        </div>
+
+        <footer className="mt-20 border-t border-slate-200 pt-8 text-center text-sm text-slate-500">
+          <p>
+            장애인 웹 프로그램 · AI 기반 취업 의사결정 플랫폼 (목업 단계 · 실제 공공 API 미연동)
           </p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {jobs.map((job) => (
-            <JobCard key={`${job.companyName}-${job.title}`} job={job} />
-          ))}
-        </div>
-      </section>
-    </main>
+        </footer>
+      </main>
+    </div>
   );
 }
