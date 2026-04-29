@@ -33,29 +33,32 @@
 
 ## 2) 사용 예정 API 목록
 
-### A. 워크넷 채용정보 API
-- **설명**: 채용공고, 직무, 근무지역 등 채용 관련 데이터 제공
+### A. 장애인 구인 실시간 현황 API (한국장애인고용공단)
+- **설명**: 현재 진행 중인 장애인 구인 사업체 현황 및 모집 직무 데이터를 XML로 제공
 - **주요 필드(예시)**:
-  - `companyName`(기업명)
-  - `jobTitle`(채용 직무)
-  - `location`(근무 지역)
+  - `busplaName`(사업장명)
+  - `jobNm`(모집 직종)
+  - `compAddr`(사업장 주소)
   - `employmentType`(고용 형태)
-  - `postedAt`(등록일)
+  - `salary`(임금)
+  - `reqCareer`(요구 경력)
 - **사용 기능**:
   - 추천 일자리 후보군 생성
   - 지역/고용형태 기반 필터링
+  - 작업환경 포함 API(`/job_list_env`)를 통한 접근성 조건 확장
 
-### B. 장애인 고용 데이터 (한국장애인고용공단)
-- **설명**: 기업/기관 단위 장애인 고용률 및 관련 통계 데이터
+### B. 장애인 표준사업장 실시간 조회 API
+- **설명**: 공단 인증을 받은 장애인 표준사업장 실시간 정보를 XML로 제공
 - **주요 필드(예시)**:
-  - `companyName`(기업명)
-  - `disabledEmploymentRate`(장애인 고용률)
-  - `retentionRate`(근속률 또는 유지율 성격 지표)
-  - `industry`(업종)
-  - `region`(지역)
+  - `authNum`(인증번호)
+  - `authDate`(인증일자)
+  - `bizrno`(사업자등록번호)
+  - `cmpnm`(사업체명)
+  - `adres`(주소)
 - **사용 기능**:
-  - 기업 장애 친화도 점수 계산 입력값
-  - 기업 비교/랭킹 리스트
+  - 표준사업장 인증 여부 확인
+  - 기업 친화도 점수의 보조 지표
+  - 기업 상세 정보 강화
 
 ### C. 장애인 고용 장려금/지원금 데이터
 - **설명**: 사업주 대상 지원금, 지원 조건, 지원 한도 정보
@@ -79,14 +82,14 @@
 import os
 import requests
 
-API_KEY = os.getenv("PUBLIC_DATA_API_KEY")
-BASE_URL = "https://api.example.go.kr/jobs"  # 실제 엔드포인트로 교체
+API_KEY = os.getenv("ODCLOUD_API_KEY")
+BASE_URL = "https://api.odcloud.kr/api/15054713/v1/uddi:9741cfd1-ff55-4555-bf21-f59ead6bed36"
 
 params = {
     "serviceKey": API_KEY,
-    "pageNo": 1,
-    "numOfRows": 20,
-    "resultType": "json"
+    "page": 1,
+    "perPage": 20,
+    "returnType": "json"
 }
 
 response = requests.get(BASE_URL, params=params, timeout=10)
@@ -99,15 +102,15 @@ print(data)
 
 ```json
 {
-  "resultCode": "00",
-  "resultMsg": "NORMAL SERVICE",
-  "totalCount": 1200,
-  "items": [
+  "page": 1,
+  "perPage": 20,
+  "totalCount": 281,
+  "currentCount": 20,
+  "data": [
     {
-      "companyName": "한빛IT솔루션",
-      "jobTitle": "웹 접근성 QA 어시스턴트",
-      "location": "서울",
-      "employmentType": "정규직"
+      "지역명": "강원특별자치도",
+      "업종명": "A.농업, 임업 및 어업",
+      "사업체수": 3
     }
   ]
 }
@@ -148,12 +151,16 @@ friendlinessScore =
 
 ### 권장 연결 흐름
 1. `services/public_data_service.py`
-   - 공공데이터 API 호출 함수 작성 (`fetch_worknet_jobs()`, `fetch_disabled_employment_stats()` 등)
-2. `services/scoring_service.py`
+   - 장려금 사업체 현황 JSON API 호출 및 정규화
+2. `services/standard_workplace_service.py`
+   - 표준사업장 XML API 호출 및 JSON 변환
+3. `services/live_job_service.py`
+   - 장애인 구인 XML API 호출 및 JSON 변환
+4. `services/scoring_service.py`
    - 지표 정규화 + `friendlinessScore` 계산
-3. `routers/companies.py`, `routers/jobs.py`, `routers/supports.py`
+5. `routers/companies.py`, `routers/jobs.py`, `routers/supports.py`
    - 서비스 함수 호출 후 스키마로 변환하여 반환
-4. 프론트엔드
+6. 프론트엔드
    - 추후 `frontend/lib/api.ts`에서 백엔드 API 호출
    - 현재 mock 데이터에서 API 기반 렌더링으로 교체
 
@@ -171,7 +178,7 @@ friendlinessScore =
 
 ### 2. API 키 보안
 - API 키는 `.env`에 저장
-- 예: `PUBLIC_DATA_API_KEY=...`
+- 예: `ODCLOUD_API_KEY=...`, `DATA_GO_API_KEY=...`
 - Git 커밋 금지 (`.gitignore` 확인)
 
 ### 3. 에러 처리
@@ -199,8 +206,16 @@ friendlinessScore =
 ---
 
 ## 빠른 체크리스트
-- [ ] 공공데이터포털 키 발급 완료
-- [ ] `.env`에 API 키 설정
-- [ ] `services`에 API 호출 함수 작성
-- [ ] `routers`에서 mock -> 실데이터로 교체
+- [x] 공공데이터포털 키 발급 완료
+- [x] `.env`에 API 키 설정
+- [x] `services`에 API 호출 함수 작성
+- [ ] `routers`에서 mock -> 실데이터로 전체 교체
 - [ ] 점수 계산 로직(`scoring_service`) 반영
+
+## 오늘 작업 반영 사항
+- `public_data_service.py`로 장려금 지원 사업체 현황 live API 연동 완료
+- `standard_workplace_service.py`로 표준사업장 실시간 조회 연동 완료
+- `live_job_service.py`로 장애인 구인 실시간 현황 및 작업환경 포함 API 연동 완료
+- 한글 깨짐 대응을 위해 응답 디코딩/문자 보정 처리 추가
+- Railway 배포용 `Procfile`, `nixpacks.toml` 설정 완료
+- 프론트 기본 화면은 아직 mock 데이터 기반이며, live API는 백엔드 검증 단계
