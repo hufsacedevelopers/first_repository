@@ -6,29 +6,24 @@ export interface CompanySubScores {
 }
 
 export interface Company {
+  id: string;
   companyName: string;
   location: string;
   disabledEmploymentRate: number;
   retentionRate: number;
   jobDiversity: number;
   friendlinessScore: number;
-  /** 산업/규모 라벨 (예: 대기업, IT) */
   industry?: string;
-  /** 고용 인원 수 (표시용) */
   disabledEmployedCount?: number;
-  /** 접근성 등급 */
   accessibilityGrade?: string;
-  /** 표준사업장 인증 여부 */
   standardWorkplaceCertified?: boolean;
-  /** 월 지원금(만원 단위 등 표시에 맞게 문자열로도 가능) */
   monthlySupportLabel?: string;
-  /** 연간 최대 지원금 라벨 */
   annualSupportLabel?: string;
-  /** 세부 영역 점수 */
   subScores?: CompanySubScores;
 }
 
 export interface Job {
+  id: string;
   title: string;
   companyName: string;
   location: string;
@@ -39,4 +34,21 @@ export interface Job {
   salaryRange?: string;
   monthlySupportLabel?: string;
   annualSupportLabel?: string;
+  // 상세 정보 (실데이터 API)
+  recruitmentPeriod?: string;
+  entryType?: string;
+  requiredCareer?: string;
+  requiredEducation?: string;
+  requiredMajor?: string;
+  agencyName?: string;
+  contactNumber?: string;
+  applicationDate?: string;
+  salaryType?: string;
+  // 근무환경 조건 (live-with-env)
+  envBothHands?: string;
+  envEyesight?: string;
+  envHandwork?: string;
+  envLiftPower?: string;
+  envLstnTalk?: string;
+  envStndWalk?: string;
 }

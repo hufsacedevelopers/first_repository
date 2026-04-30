@@ -1,0 +1,133 @@
+Error: Route "/job/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at JobDetailPage (app\job\[id]\page.tsx:26:39)
+  24 |
+  25 | export default async function JobDetailPage({ params }: Props) {
+> 26 |   const job = await getJobById(params.id);
+     |                                       ^
+  27 |   if (!job) return notFound();
+  28 |
+  29 |   const envEntries = (
+Error: Route "/job/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at JobDetailPage (app\job\[id]\page.tsx:26:39)
+  24 |
+  25 | export default async function JobDetailPage({ params }: Props) {
+> 26 |   const job = await getJobById(params.id);
+     |                                       ^
+  27 |   if (!job) return notFound();
+  28 |
+  29 |   const envEntries = (
+Error: Route "/company/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CompanyDetailPage (app\company\[id]\page.tsx:36:47)
+  34 |
+  35 | export default async function CompanyDetailPage({ params }: Props) {
+> 36 |   const company = await getCompanyById(params.id);
+     |                                               ^
+  37 |   if (!company) return notFound();
+  38 |
+  39 |   const sub = company.subScores;
+API unavailable, fallback to mock for 30s. Error: API fetch failed: /companies (http://127.0.0.1:8000)
+    at get (lib\api.ts:10:11)
+    at async getCompanies (lib\data.ts:25:17)
+    at async getCompanyById (lib\data.ts:67:21)
+    at async CompanyDetailPage (app\company\[id]\page.tsx:36:19)
+   8 |     res = await fetch(`${BASE_URL}${path}`, { cache: "no-store" });
+   9 |   } catch (error) {
+> 10 |     throw new Error(`API fetch failed: ${path} (${BASE_URL})`, { cause: error });
+     |           ^
+  11 |   }
+  12 |   if (!res.ok) throw new Error(`API ${res.status}: ${path}`);
+  13 |   return res.json() as Promise<T>; {
+  [cause]: TypeError: fetch failed
+      at async get (lib\api.ts:8:11)
+      at async getCompanies (lib\data.ts:25:17)
+      at async getCompanyById (lib\data.ts:67:21)
+      at async CompanyDetailPage (app\company\[id]\page.tsx:36:19)
+     6 |   let res: Response;
+     7 |   try {
+  >  8 |     res = await fetch(`${BASE_URL}${path}`, { cache: "no-store" });
+       |           ^
+     9 |   } catch (error) {
+    10 |     throw new Error(`API fetch failed: ${path} (${BASE_URL})`, { cause: error });
+    11 |   } {
+    [cause]: Error: connect ECONNREFUSED 127.0.0.1:8000
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:8000) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 8000
+    }
+  }
+}
+Error: Route "/company/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CompanyDetailPage (app\company\[id]\page.tsx:36:47)
+  34 |
+  35 | export default async function CompanyDetailPage({ params }: Props) {
+> 36 |   const company = await getCompanyById(params.id);
+     |                                               ^
+  37 |   if (!company) return notFound();
+  38 |
+  39 |   const sub = company.subScores;
+Error: Route "/company/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CompanyDetailPage (app\company\[id]\page.tsx:36:47)
+  34 |
+  35 | export default async function CompanyDetailPage({ params }: Props) {
+> 36 |   const company = await getCompanyById(params.id);
+     |                                               ^
+  37 |   if (!company) return notFound();
+  38 |
+  39 |   const sub = company.subScores;
+Error: Route "/job/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at JobDetailPage (app\job\[id]\page.tsx:26:39)
+  24 |
+  25 | export default async function JobDetailPage({ params }: Props) {
+> 26 |   const job = await getJobById(params.id);
+     |                                       ^
+  27 |   if (!job) return notFound();
+  28 |
+  29 |   const envEntries = (
+Error: Route "/job/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at JobDetailPage (app\job\[id]\page.tsx:26:39)
+  24 |
+  25 | export default async function JobDetailPage({ params }: Props) {
+> 26 |   const job = await getJobById(params.id);
+     |                                       ^
+  27 |   if (!job) return notFound();
+  28 |
+  29 |   const envEntries = (
+Error: Route "/company/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CompanyDetailPage (app\company\[id]\page.tsx:36:47)
+  34 |
+  35 | export default async function CompanyDetailPage({ params }: Props) {
+> 36 |   const company = await getCompanyById(params.id);
+     |                                               ^
+  37 |   if (!company) return notFound();
+  38 |
+  39 |   const sub = company.subScores;
+Error: Route "/company/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CompanyDetailPage (app\company\[id]\page.tsx:36:47)
+  34 |
+  35 | export default async function CompanyDetailPage({ params }: Props) {
+> 36 |   const company = await getCompanyById(params.id);
+     |                                               ^
+  37 |   if (!company) return notFound();
+  38 |
+  39 |   const sub = company.subScores;
+Error: Route "/company/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CompanyDetailPage (app\company\[id]\page.tsx:36:47)
+  34 |
+  35 | export default async function CompanyDetailPage({ params }: Props) {
+> 36 |   const company = await getCompanyById(params.id);
+     |                                               ^
+  37 |   if (!company) return notFound();
+  38 |
+  39 |   const sub = company.subScores;
+Error: Route "/recommendations" used `searchParams.region`. `searchParams` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at RecommendationsPage (app\recommendations\page.tsx:27:31)
+  25 |
+  26 | export default async function RecommendationsPage({ searchParams }: RecommendationsPagePro...
+> 27 |   const region = searchParams.region?.trim() ?? "";
+     |                               ^
+  28 |   const employmentType = searchParams.employmentType?.trim() ?? "";
+  29 |   const keyword = searchParams.keyword?.trim() ?? "";
+  30 |

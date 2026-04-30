@@ -4,10 +4,14 @@ import JobsSection from "@/components/JobsSection";
 import SiteHeader from "@/components/SiteHeader";
 import StatsStrip from "@/components/StatsStrip";
 import SupportSection from "@/components/SupportSection";
-import { getCompanies, getJobs } from "@/lib/data";
+import { getCompanies, getJobs, getLiveJobsTotal } from "@/lib/data";
 
 export default async function HomePage() {
-  const [companies, jobs] = await Promise.all([getCompanies(), getJobs()]);
+  const [companies, jobs, liveJobsTotal] = await Promise.all([
+    getCompanies(),
+    getJobs(6),
+    getLiveJobsTotal(),
+  ]);
 
   return (
     <div className="min-h-screen bg-page">
@@ -16,7 +20,7 @@ export default async function HomePage() {
         <HeroSection />
 
         <div className="mt-10">
-          <StatsStrip />
+          <StatsStrip liveJobsTotal={liveJobsTotal} />
         </div>
 
         <div className="mt-16">
@@ -33,7 +37,7 @@ export default async function HomePage() {
 
         <footer className="mt-20 border-t border-slate-200 pt-8 text-center text-sm text-slate-500">
           <p>
-            장애인 웹 프로그램 · AI 기반 취업 의사결정 플랫폼 (목업 단계 · 실제 공공 API 미연동)
+            장애인 고용 의사결정 플랫폼 · 공공데이터포털 실시간 연동
           </p>
         </footer>
       </main>

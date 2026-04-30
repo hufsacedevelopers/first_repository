@@ -1,10 +1,14 @@
-const stats = [
-  { value: "1,200+", label: "정량 평가 기업" },
-  { value: "960만원", label: "최대 지원금/년" },
-  { value: "15개", label: "평가 지표" }
-];
+interface StatsStripProps {
+  liveJobsTotal?: number;
+}
 
-export default function StatsStrip() {
+export default function StatsStrip({ liveJobsTotal }: StatsStripProps) {
+  const stats = [
+    { value: liveJobsTotal != null ? `${liveJobsTotal.toLocaleString()}건` : "1,200+건", label: "실시간 장애인 구인 공고" },
+    { value: "960만원", label: "최대 지원금/년" },
+    { value: "15개", label: "평가 지표" },
+  ];
+
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       {stats.map((item) => (

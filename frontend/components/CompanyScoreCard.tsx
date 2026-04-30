@@ -1,4 +1,6 @@
 import { Company } from "@/types";
+import Link from "next/link";
+import BookmarkButton from "./BookmarkButton";
 
 interface CompanyScoreCardProps {
   company: Company;
@@ -64,7 +66,7 @@ export default function CompanyScoreCard({ company }: CompanyScoreCardProps) {
           <dt className="text-xs text-slate-500">표준사업장 인증</dt>
           <dd className="mt-1 font-semibold text-slate-900">
             {company.standardWorkplaceCertified === true
-              ? "표준사업장 인증"
+              ? "✓ 표준사업장 인증"
               : company.standardWorkplaceCertified === false
                 ? "표준사업장 미인증"
                 : "—"}
@@ -105,6 +107,16 @@ export default function CompanyScoreCard({ company }: CompanyScoreCardProps) {
           </div>
         </dl>
       )}
+
+      <div className="mt-5 flex items-center gap-2 border-t border-slate-100 pt-4">
+        <Link
+          href={`/company/${company.id}`}
+          className="inline-flex flex-1 items-center justify-center rounded-xl border border-slate-300 bg-white py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        >
+          기업 상세 보기
+        </Link>
+        <BookmarkButton storageKey={`company-${company.id}`} label="관심" />
+      </div>
     </article>
   );
 }

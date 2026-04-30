@@ -30,7 +30,7 @@ export default function JobsSection({ jobs }: JobsSectionProps) {
       </div>
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {jobs.map((job) => (
-          <JobCard key={`${job.companyName}-${job.title}`} job={job} />
+          <JobCard key={job.id} job={job} />
         ))}
       </div>
     </section>

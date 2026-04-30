@@ -2,6 +2,7 @@ import { Company, Job } from "@/types";
 
 export const companies: Company[] = [
   {
+    id: "0",
     companyName: "삼성전자",
     location: "경기 수원시",
     industry: "대기업",
@@ -17,6 +18,7 @@ export const companies: Company[] = [
     subScores: { accessibility: 95, employment: 88, welfare: 93, culture: 91 }
   },
   {
+    id: "1",
     companyName: "네이버",
     location: "경기 성남시",
     industry: "IT",
@@ -32,6 +34,7 @@ export const companies: Company[] = [
     subScores: { accessibility: 90, employment: 85, welfare: 89, culture: 88 }
   },
   {
+    id: "2",
     companyName: "현대자동차",
     location: "서울 강남구",
     industry: "제조",
@@ -50,6 +53,7 @@ export const companies: Company[] = [
 
 export const jobs: Job[] = [
   {
+    id: "0",
     title: "프론트엔드 개발자",
     companyName: "네이버",
     location: "경기 성남시",
@@ -62,6 +66,7 @@ export const jobs: Job[] = [
     accessibilityTags: ["재택근무", "유연근무", "접근성 우수"]
   },
   {
+    id: "1",
     title: "데이터 분석가",
     companyName: "카카오",
     location: "제주",
@@ -74,6 +79,7 @@ export const jobs: Job[] = [
     accessibilityTags: ["복지 우수", "장애인 편의시설"]
   },
   {
+    id: "2",
     title: "UI/UX 디자이너",
     companyName: "토스",
     location: "서울 강남구",

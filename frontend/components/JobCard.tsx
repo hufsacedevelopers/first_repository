@@ -1,4 +1,6 @@
 import { Job } from "@/types";
+import Link from "next/link";
+import BookmarkButton from "./BookmarkButton";
 
 interface JobCardProps {
   job: Job;
@@ -11,8 +13,8 @@ export default function JobCard({ job }: JobCardProps) {
   return (
     <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm ring-1 ring-slate-100/80 transition hover:border-primary-200 hover:shadow-md">
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <h3 className="text-lg font-bold text-slate-900">{job.title}</h3>
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-lg font-bold text-slate-900">{job.title}</h3>
           <p className="mt-1 text-sm font-medium text-slate-700">{job.companyName}</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -35,10 +37,14 @@ export default function JobCard({ job }: JobCardProps) {
         {job.salaryRange ? ` · ${job.salaryRange}` : null}
       </p>
 
+      {job.entryType && (
+        <p className="text-sm text-slate-500">{job.entryType} · {job.requiredCareer || "경력 무관"}</p>
+      )}
+
       <div className="mt-4 flex flex-wrap gap-2">
         {job.accessibilityTags.map((tag) => (
           <span
-            key={`${job.title}-${tag}`}
+            key={`${job.id}-${tag}`}
             className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700"
           >
             {tag}
@@ -56,13 +62,14 @@ export default function JobCard({ job }: JobCardProps) {
         </div>
       )}
 
-      <div className="mt-auto pt-6">
-        <button
-          type="button"
-          className="inline-flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+      <div className="mt-auto flex items-center gap-2 pt-6">
+        <Link
+          href={`/job/${job.id}`}
+          className="inline-flex flex-1 items-center justify-center rounded-xl border border-slate-300 bg-white py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
         >
           자세히 보기
-        </button>
+        </Link>
+        <BookmarkButton storageKey={`job-${job.id}`} />
       </div>
     </article>
   );
