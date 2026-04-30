@@ -19,8 +19,11 @@ export default function JobCard({ job }: JobCardProps) {
         </div>
         <div className="flex flex-wrap gap-2">
           {score != null && (
-            <span className="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-semibold text-primary-800">
-              친화도 {score}점
+            <span
+              title="근무환경 6개 지표(서기·시력·청력·중량물·양손·경력) 기반 접근성 점수"
+              className="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-semibold text-primary-800 cursor-help"
+            >
+              접근성 {score}점
             </span>
           )}
           {match != null && (

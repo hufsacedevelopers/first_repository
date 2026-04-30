@@ -18,8 +18,8 @@ export default function CompanyListSection({ companies }: CompanyListSectionProp
             기업별 장애 친화도 정량 평가 및 비교
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
-            15개 공공데이터 지표를 종합하여 0–100점 척도로 평가합니다. 고용률, 접근성 등급, 지원금
-            정보를 투명하게 공개합니다.
+            장애인 고용률·접근성 등급·표준사업장 인증·복지 수준 등 공공데이터 기반 지표를 종합해
+            0–100점으로 평가합니다.
           </p>
         </div>
         <span className="inline-flex shrink-0 items-center rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-900">

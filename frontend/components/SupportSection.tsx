@@ -154,8 +154,16 @@ export default function SupportSection() {
               월 지원금 <span className="font-semibold text-slate-900">{monthlyMan}만원</span>
             </p>
             <p className="mt-4 text-xs leading-relaxed text-slate-500">
-              본 계산은 데모용 단순 모델입니다. 실제 지원 여부·금액은 관계 기관 기준을 확인하세요.
+              참고용 산출입니다. 실제 지원 여부·금액은 신청 조건에 따라 다릅니다.
             </p>
+            <a
+              href="https://www.kead.or.kr/view/service/service02_04_01.jsp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            >
+              한국장애인고용공단 신청하기 →
+            </a>
           </div>
         </div>
       </div>

@@ -1,0 +1,14 @@
+envStndWalk: 일부 서서하는 작업 가능
+envLiftPower: 5Kg 이내의 물건을 다룰 수 있음
+envEyesight: 일상적 활동 가능
+envLstnTalk: 간단한 듣고 말하기 가능
+envStndWalk: 오랫동안 가능
+envBothHands: 양손작업 가능
+envEyesight: 비교적 큰 인쇄물을 읽을 수 있음
+envLiftPower: 5~20Kg의 물건을 다룰 수 있음
+envEyesight: 아주 작은 글씨를 읽을 수 있음
+envLstnTalk: 듣고 말하기에 어려움 없음
+envStndWalk: 서거나 걷는 일 어려움
+envBothHands: 한손작업 가능
+envLiftPower: 20Kg 이상의 물건을 다룰 수 있음
+envLstnTalk: 듣고 말하는 작업 어려움

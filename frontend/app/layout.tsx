@@ -12,7 +12,7 @@ const notoSansKr = Noto_Sans_KR({
 
 export const metadata: Metadata = {
   title: "장애인 취업 의사결정 플랫폼",
-  description: "AI 기반 장애 친화 기업 평가 및 일자리 추천 서비스"
+  description: "공공데이터 기반 장애인 취업 의사결정 플랫폼 — 근무환경 지표로 장애 유형별 맞춤 일자리를 안내합니다"
 };
 
 export default function RootLayout({

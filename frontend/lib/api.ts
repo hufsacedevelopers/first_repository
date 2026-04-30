@@ -67,23 +67,48 @@ function extractRegion(address: string): string {
   return match ? match[0] : address.split(" ").slice(0, 2).join(" ");
 }
 
+function computeAccessibilityScore(item: LiveJobItem): number {
+  let score = 60;
+
+  if (item.envStndWalk === "서거나 걷는 일 어려움") score += 15;
+  else if (item.envStndWalk === "일부 서서하는 작업 가능") score += 8;
+
+  if (item.envLiftPower?.includes("5Kg 이내")) score += 8;
+  else if (item.envLiftPower?.includes("5~20Kg")) score += 4;
+
+  if (item.envEyesight === "일상적 활동 가능") score += 8;
+  else if (item.envEyesight?.includes("비교적 큰")) score += 4;
+
+  if (item.envLstnTalk === "듣고 말하는 작업 어려움") score += 8;
+  else if (item.envLstnTalk === "간단한 듣고 말하기 가능") score += 5;
+
+  if (item.envBothHands === "한손작업 가능") score += 5;
+  if (item.entryType === "신입" || item.entryType === "무관") score += 3;
+
+  return Math.min(100, score);
+}
+
 function generateTags(item: LiveJobItem): string[] {
   const tags: string[] = [];
   if (item.entryType === "신입" || item.entryType === "무관") tags.push("신입 환영");
-  if (item.envStndWalk && item.envStndWalk !== "필요") tags.push("서기/걷기 무관");
-  if (item.envLiftPower && item.envLiftPower !== "필요") tags.push("중량물 무관");
+  if (item.envStndWalk === "서거나 걷는 일 어려움") tags.push("이동 약자 적합");
+  if (item.envBothHands === "한손작업 가능") tags.push("한손 작업 가능");
+  if (item.envEyesight === "일상적 활동 가능") tags.push("시력 부담 낮음");
+  if (item.envLstnTalk === "듣고 말하는 작업 어려움") tags.push("청각 부담 낮음");
   return tags;
 }
 
 function mapLiveJobToJob(item: LiveJobItem, index: number): Job {
   return {
     id: String(index),
+    friendlinessScore: computeAccessibilityScore(item),
     title: item.jobName || "직무명 없음",
     companyName: item.businessName || "기업명 없음",
     location: extractRegion(item.companyAddress),
     employmentType: mapEmploymentType(item.employmentType),
     accessibilityTags: generateTags(item),
     salaryRange: formatSalary(item.salary, item.salaryType),
+    salaryType: item.salaryType,
     recruitmentPeriod: item.recruitmentPeriod,
     entryType: item.entryType,
     requiredCareer: item.requiredCareer,
@@ -91,7 +116,6 @@ function mapLiveJobToJob(item: LiveJobItem, index: number): Job {
     agencyName: item.agencyName,
     contactNumber: item.contactNumber,
     applicationDate: item.applicationDate,
-    salaryType: item.salaryType,
     envBothHands: item.envBothHands,
     envEyesight: item.envEyesight,
     envHandwork: item.envHandwork,

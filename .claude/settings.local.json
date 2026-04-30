@@ -11,7 +11,17 @@
       "PowerShell(Receive-Job *)",
       "PowerShell(Get-Process *)",
       "Bash(mkdir -p \"C:/first_repository/frontend/app/job/[id]\")",
-      "Bash(mkdir -p \"C:/first_repository/frontend/app/company/[id]\")"
+      "Bash(mkdir -p \"C:/first_repository/frontend/app/company/[id]\")",
+      "Bash(curl -s \"http://127.0.0.1:8000/jobs/live-with-env?pageNo=1&numOfRows=3\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); items=d.get\\('data',[]\\); print\\('totalCount:', d.get\\('totalCount'\\)\\); [print\\(i, '|', item.get\\('jobName','?'\\), '| envStndWalk:', item.get\\('envStndWalk','?'\\)\\) for i,item in enumerate\\(items\\)]\")",
+      "Bash(Start-Process -FilePath \"python\" -ArgumentList \"-m\",\"uvicorn\",\"app.main:app\",\"--host\",\"127.0.0.1\",\"--port\",\"8000\" -RedirectStandardOutput \"C:\\\\first_repository\\\\backend_stdout.log\" -RedirectStandardError \"C:\\\\first_repository\\\\backend_stderr.log\" -WindowStyle Hidden)",
+      "Bash(Start-Sleep -Seconds 4)",
+      "Bash(curl -s \"http://127.0.0.1:8000/health\")",
+      "PowerShell(Set-Location C:\\\\first_repository\\\\backend; Start-Process -FilePath \"python\" -ArgumentList \"-m\",\"uvicorn\",\"app.main:app\",\"--host\",\"127.0.0.1\",\"--port\",\"8000\" -RedirectStandardOutput \"C:\\\\first_repository\\\\backend_stdout.log\" -RedirectStandardError \"C:\\\\first_repository\\\\backend_stderr.log\" -WindowStyle Hidden; Start-Sleep -Seconds 5; \\(Invoke-WebRequest -Uri \"http://127.0.0.1:8000/health\" -UseBasicParsing\\).Content)",
+      "PowerShell($resp = Invoke-WebRequest -Uri \"http://127.0.0.1:8000/jobs/live-with-env?pageNo=1&numOfRows=3\" -UseBasicParsing; $data = $resp.Content | ConvertFrom-Json; Write-Output \"totalCount: $\\($data.totalCount\\)\"; foreach \\($item in $data.data\\) { Write-Output \"$\\($item.jobName\\) | envStndWalk: $\\($item.envStndWalk\\) | envEyesight: $\\($item.envEyesight\\)\" })",
+      "PowerShell($resp = try { Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 5 } catch { $null }; if \\($resp\\) { Write-Output \"Frontend up: $\\($resp.StatusCode\\)\" } else { Write-Output \"Frontend down\" })",
+      "PowerShell(Get-Command *)",
+      "PowerShell(Start-Sleep -Seconds 12; $resp = try { Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 10 } catch { $null }; if \\($resp\\) { Write-Output \"Status: $\\($resp.StatusCode\\)\"; $html = $resp.Content; if \\($html -match '접근성 \\\\d+점'\\) { Write-Output \"접근성점수=FOUND: $\\($Matches[0]\\)\" } else { Write-Output \"접근성점수=NOT FOUND\" }; if \\($html -match 'AI'\\) { Write-Output \"AI text still present\" } else { Write-Output \"AI text clean\" } } else { Write-Output \"Still down, checking logs...\"; Get-Content \"C:\\\\first_repository\\\\frontend_stderr.log\" -Tail 20 })"
     ]
   }
 }

@@ -4,9 +4,9 @@ interface StatsStripProps {
 
 export default function StatsStrip({ liveJobsTotal }: StatsStripProps) {
   const stats = [
-    { value: liveJobsTotal != null ? `${liveJobsTotal.toLocaleString()}건` : "1,200+건", label: "실시간 장애인 구인 공고" },
-    { value: "960만원", label: "최대 지원금/년" },
-    { value: "15개", label: "평가 지표" },
+    { value: liveJobsTotal != null ? `${liveJobsTotal.toLocaleString()}건` : "—", label: "실시간 장애인 구인 공고" },
+    { value: "960만원", label: "고용장려금 최대/년" },
+    { value: "6개", label: "근무환경 접근성 지표" },
   ];
 
   return (

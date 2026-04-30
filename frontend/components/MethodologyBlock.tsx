@@ -3,8 +3,8 @@ export default function MethodologyBlock() {
     <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-6 md:p-8">
       <h3 className="text-lg font-bold text-slate-900">평가 방법론</h3>
       <p className="mt-2 text-sm leading-relaxed text-slate-600">
-        고용노동부, 한국장애인고용공단 등 15개 공공데이터를 수집하여 4개 영역(접근성, 고용, 복지,
-        문화)을 정량 평가합니다.
+        한국장애인고용공단 공공데이터를 기반으로 서기·시력·청력·중량물·양손·경력
+        6개 근무환경 지표를 분석해 접근성 점수를 산출합니다.
       </p>
       <ul className="mt-6 grid gap-4 sm:grid-cols-3">
         <li className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
