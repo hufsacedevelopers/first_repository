@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip list *)",
+      "Bash(pip install *)",
+      "Bash(pip3 install *)",
+      "Bash(python3 -m pip install -r backend/requirements.txt -q)",
+      "Bash(python -m pip install -r backend/requirements.txt -q)",
+      "PowerShell(Set-Location C:\\\\first_repository; $env:PYTHONPATH=\"C:\\\\first_repository\\\\backend\"; Start-Process -FilePath \"python\" -ArgumentList \"-m uvicorn app.main:app --host 0.0.0.0 --port 8000\" -WorkingDirectory \"C:\\\\first_repository\\\\backend\" -WindowStyle Hidden -PassThru | Select-Object Id)",
+      "PowerShell(Start-Sleep -Seconds 3; try { $r = Invoke-WebRequest -Uri \"http://localhost:8000/health\" -TimeoutSec 5 -UseBasicParsing; Write-Host \"STATUS: $\\($r.StatusCode\\)\"; Write-Host $r.Content } catch { Write-Host \"ERROR: $_\" })",
+      "PowerShell(Receive-Job *)",
+      "PowerShell(Get-Process *)"
+    ]
+  }
+}

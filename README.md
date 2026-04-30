@@ -136,6 +136,8 @@ ruff check .
 - `docs/data-plan.md`: 데이터 활용 계획 및 확장 포인트
 - `docs/api-spec.md`: API 명세 초안
 - `docs/api-integration-guide.md`: 공공데이터 API 연동 가이드
+- `docs/frontend-improvements.md`: 프론트 개선 우선순위
+- `docs/vercel-frontend-deploy-checklist.md`: Vercel 프론트 배포 체크리스트
 
 ## 🛠️ 현재 기술 스택
 

@@ -45,7 +45,7 @@ def _request_job_api(path: str, page_no: int, num_of_rows: int) -> ElementTree.E
         raise HTTPException(status_code=502, detail="구인 API XML 파싱 실패") from exc
 
     result_code = root.findtext(".//resultCode")
-    if result_code and result_code != "00":
+    if result_code and result_code not in ("00", "0000"):
         result_msg = root.findtext(".//resultMsg") or "외부 API 오류"
         raise HTTPException(status_code=502, detail=f"구인 API 오류({result_code}): {result_msg}")
     return root
