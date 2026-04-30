@@ -1,4 +1,5 @@
 import JobCard from "@/components/JobCard";
+import Link from "next/link";
 import { Job } from "@/types";
 
 interface JobsSectionProps {
@@ -20,12 +21,12 @@ export default function JobsSection({ jobs }: JobsSectionProps) {
             AI가 당신의 역량, 선호도, 필요 조건을 분석하여 가장 적합한 일자리를 추천합니다.
           </p>
         </div>
-        <button
-          type="button"
+        <Link
+          href="/recommendations"
           className="inline-flex shrink-0 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
         >
           더 많은 일자리 보기
-        </button>
+        </Link>
       </div>
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {jobs.map((job) => (

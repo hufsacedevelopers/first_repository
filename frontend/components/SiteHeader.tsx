@@ -8,15 +8,15 @@ export default function SiteHeader() {
           장애인 웹 프로그램
         </Link>
         <nav className="flex items-center gap-6 text-sm text-slate-600" aria-label="주요 메뉴">
-          <a href="#companies" className="transition hover:text-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded">
+          <Link href="/#companies" className="transition hover:text-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded">
             기업 평가
-          </a>
-          <a href="#jobs" className="transition hover:text-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded">
+          </Link>
+          <Link href="/recommendations" className="transition hover:text-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded">
             맞춤 일자리
-          </a>
-          <a href="#support" className="transition hover:text-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded">
+          </Link>
+          <Link href="/#support" className="transition hover:text-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded">
             지원금
-          </a>
+          </Link>
         </nav>
       </div>
     </header>

@@ -19,7 +19,7 @@ export default function HeroSection() {
       </p>
       <div className="relative mt-8 flex flex-wrap gap-3">
         <Link
-          href="#jobs"
+          href="/recommendations"
           className="inline-flex items-center justify-center rounded-xl bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
         >
           맞춤 일자리 찾기
