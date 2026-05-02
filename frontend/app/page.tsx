@@ -1,5 +1,6 @@
 import CompanyListSection from "@/components/CompanyListSection";
 import HeroSection from "@/components/HeroSection";
+import HomeUserJourney from "@/components/HomeUserJourney";
 import JobsSection from "@/components/JobsSection";
 import SiteHeader from "@/components/SiteHeader";
 import StatsStrip from "@/components/StatsStrip";
@@ -18,6 +19,7 @@ export default async function HomePage() {
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-6 pb-16 pt-8">
         <HeroSection />
+        <HomeUserJourney />
 
         <div className="mt-10">
           <StatsStrip liveJobsTotal={liveJobsTotal} />

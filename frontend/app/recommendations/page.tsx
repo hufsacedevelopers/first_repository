@@ -12,6 +12,23 @@ interface RecommendationsPageProps {
   }>;
 }
 
+/** 필터 미선택 시 노출되는 안내 */
+const FILTER_NEUTRAL_HINT =
+  "장애 유형을 선택하면 한국장애인고용공단 구인 데이터의 근무환경(서기·시력·청력·중량물 등) 조건을 반영해 우선 확인할 만한 공고를 골라 봅니다.";
+
+/** 장애 유형별 매칭 설명 (추천 배너) */
+const DISABILITY_FILTER_COPY: Record<string, string> = {
+  지체장애:
+    "장시간 서기·무거운 물건을 많이 들어야 하는 환경을 피하고, 이동·기립 동선 부담이 상대적으로 낮은 공고를 우선 보여 줍니다.",
+  시각장애:
+    "아주 작은 글자 판독 부담이 낮은 직무, 시각에 덜 의존하는 환경을 우선 고려했습니다.",
+  청각장애:
+    "소음·듣고 말하기 부담이 상대적으로 낮은 업무환경 데이터를 우선 표시합니다.",
+  발달장애:
+    "복잡한 대인관계 스트레스가 낮은 역할·규칙적인 업무를 우선 고려합니다. 제공되는 근무환경 항목 범위 안에서는 중량물·장시간 기립 부담이 상대적으로 낮은 공고를 보여 줍니다.",
+  기타: "환경 조건과 무관하게 전체 공고를 표시합니다.",
+};
+
 // env 필드 기반 장애 유형 접근성 판단
 // "해당 조건이 부담이 낮다" = 해당 장애 유형 구직자에게 적합
 const DISABILITY_FILTER: Record<string, (job: Job) => boolean> = {
@@ -73,6 +90,21 @@ export default async function RecommendationsPage({ searchParams }: Recommendati
             장애 유형을 선택하면 근무환경 데이터(서기·시력·청력·중량물 등)를 기반으로
             접근 가능한 공고를 필터링합니다.
           </p>
+
+          {!disabilityType ? (
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-700">
+              {FILTER_NEUTRAL_HINT}
+            </div>
+          ) : (
+            <div className="mt-5 rounded-2xl border border-primary-200 bg-primary-50/70 px-4 py-3 text-sm text-primary-950 shadow-sm">
+              <p className="font-semibold text-primary-900">
+                현재 필터: {disabilityType === "기타" ? "기타" : disabilityType}
+              </p>
+              <p className="mt-1.5 leading-relaxed text-primary-900/95">
+                {DISABILITY_FILTER_COPY[disabilityType] ?? FILTER_NEUTRAL_HINT}
+              </p>
+            </div>
+          )}
 
           <form action="/recommendations" method="get" className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {/* 장애 유형 — 핵심 필터 */}
@@ -144,18 +176,6 @@ export default async function RecommendationsPage({ searchParams }: Recommendati
             </div>
           </form>
         </section>
-
-        {/* 필터 안내 배너 */}
-        {disabilityType && DISABILITY_FILTER[disabilityType] && disabilityType !== "기타" && (
-          <div className="mt-4 rounded-2xl border border-primary-200 bg-primary-50/60 px-5 py-3 text-sm text-primary-900">
-            <span className="font-semibold">{disabilityType}</span> 필터 적용 중 —{" "}
-            {disabilityType === "지체장애" && "장시간 서 있는 작업을 요구하지 않는 공고"}
-            {disabilityType === "시각장애" && "아주 작은 글씨 판독이 불필요한 공고"}
-            {disabilityType === "청각장애" && "완전한 청력·대화 능력이 불필요한 공고"}
-            {disabilityType === "발달장애" && "중량 작업이 적고 장시간 기립 작업이 없는 공고"}
-            만 표시합니다.
-          </div>
-        )}
 
         <section className="mt-8 space-y-4">
           <p className="text-sm text-slate-600">

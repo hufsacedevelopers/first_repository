@@ -1,6 +1,8 @@
 import { Company } from "@/types";
 import Link from "next/link";
+
 import BookmarkButton from "./BookmarkButton";
+import ScoreTooltip from "./ScoreTooltip";
 
 interface CompanyScoreCardProps {
   company: Company;
@@ -39,11 +41,16 @@ export default function CompanyScoreCard({ company }: CompanyScoreCardProps) {
           </p>
         </div>
         <div className="text-right">
-          <p className="text-3xl font-bold tabular-nums text-primary-800">
-            {company.friendlinessScore}
-            <span className="text-lg font-semibold text-slate-500">/100</span>
-          </p>
-          <p className="text-xs text-slate-500">장애 친화도 점수</p>
+          <div className="flex items-start justify-end gap-1">
+            <p className="text-3xl font-bold tabular-nums text-primary-800">
+              {company.friendlinessScore}
+              <span className="text-lg font-semibold text-slate-500">/100</span>
+            </p>
+            <div className="pt-1">
+              <ScoreTooltip ariaLabel="장애 친화도 점수 안내" />
+            </div>
+          </div>
+          <p className="mt-1 text-xs text-slate-500">장애 친화도 점수</p>
         </div>
       </div>
 

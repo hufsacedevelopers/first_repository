@@ -156,6 +156,9 @@ export default function SupportSection() {
             <p className="mt-4 text-xs leading-relaxed text-slate-500">
               참고용 산출입니다. 실제 지원 여부·금액은 신청 조건에 따라 다릅니다.
             </p>
+            <p className="mt-4 text-sm leading-relaxed text-slate-700">
+              아래 신청 페이지에서 유형별 서류와 절차를 확인하면, 채용·지원금을 한 번에 안내받을 수 있습니다.
+            </p>
             <a
               href="https://www.kead.or.kr/view/service/service02_04_01.jsp"
               target="_blank"

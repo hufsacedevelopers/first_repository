@@ -1,5 +1,7 @@
 import { Job } from "@/types";
 import Link from "next/link";
+
+import ScoreTooltip from "./ScoreTooltip";
 import BookmarkButton from "./BookmarkButton";
 
 interface JobCardProps {
@@ -17,18 +19,17 @@ export default function JobCard({ job }: JobCardProps) {
           <h3 className="truncate text-lg font-bold text-slate-900">{job.title}</h3>
           <p className="mt-1 text-sm font-medium text-slate-700">{job.companyName}</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {score != null && (
-            <span
-              title="근무환경 6개 지표(서기·시력·청력·중량물·양손·경력) 기반 접근성 점수"
-              className="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-semibold text-primary-800 cursor-help"
-            >
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-semibold text-primary-800 ring-1 ring-primary-100/80">
               접근성 {score}점
+              <ScoreTooltip ariaLabel="접근성 점수 산정 안내" />
             </span>
           )}
           {match != null && (
-            <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800">
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-100/80">
               {match}% 매칭
+              <ScoreTooltip ariaLabel="매칭 점수 산정 안내" />
             </span>
           )}
         </div>

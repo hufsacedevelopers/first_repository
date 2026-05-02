@@ -1,3 +1,4 @@
+import ScoreTooltip from "@/components/ScoreTooltip";
 import SiteHeader from "@/components/SiteHeader";
 import BookmarkButton from "@/components/BookmarkButton";
 import { getJobById } from "@/lib/data";
@@ -63,6 +64,15 @@ export default async function JobDetailPage({ params }: Props) {
             </div>
             <BookmarkButton storageKey={`job-${job.id}`} label="찜하기" />
           </div>
+
+          {job.friendlinessScore != null && (
+            <div className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-primary-100 bg-primary-50/50 px-4 py-3">
+              <span className="text-sm font-semibold text-primary-900">
+                접근성 점수 {job.friendlinessScore}점
+              </span>
+              <ScoreTooltip ariaLabel="접근성 점수 산정 안내" />
+            </div>
+          )}
 
           {/* 핵심 정보 그리드 */}
           <dl className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -175,6 +185,9 @@ export default async function JobDetailPage({ params }: Props) {
             <div className="mt-6 rounded-xl border border-primary-100 bg-primary-50/40 p-4 text-sm text-primary-900">
               한국장애인고용공단(1588-1519)을 통해 구직 상담 및 취업 지원 서비스를 받을 수 있습니다.
             </div>
+            <p className="mt-4 text-sm leading-relaxed text-slate-600">
+              이 공고 정보를 바탕으로 공단 상담을 신청하면, 담당자가 지원금·적합 직무를 함께 안내해 줍니다.
+            </p>
             <a
               href="https://www.kead.or.kr/view/service/service02_06.jsp"
               target="_blank"
@@ -187,27 +200,32 @@ export default async function JobDetailPage({ params }: Props) {
         )}
 
         {/* 하단 CTA */}
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/recommendations"
-            className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50"
-          >
-            다른 일자리 보기
-          </Link>
-          <Link
-            href="/#support"
-            className="rounded-xl bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-800"
-          >
-            지원금 계산하기
-          </Link>
-          <a
-            href="https://www.kead.or.kr/view/service/service02_06.jsp"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
-          >
-            공단 지원 상담 신청 →
-          </a>
+        <div className="mt-10 space-y-4">
+          <p className="text-sm leading-relaxed text-slate-600">
+            홈 하단 지원금 계산기에서는 예상 금액을 확인한 뒤 공단 신청 페이지로 이어지며, 필요 시 같은 공단 링크로 상담도 요청할 수 있습니다.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/recommendations"
+              className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+            >
+              다른 일자리 보기
+            </Link>
+            <Link
+              href="/#support"
+              className="rounded-xl bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-800"
+            >
+              지원금 계산하기
+            </Link>
+            <a
+              href="https://www.kead.or.kr/view/service/service02_06.jsp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
+            >
+              공단 지원 상담 신청 →
+            </a>
+          </div>
         </div>
       </main>
     </div>

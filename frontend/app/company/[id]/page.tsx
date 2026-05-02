@@ -1,3 +1,4 @@
+import ScoreTooltip from "@/components/ScoreTooltip";
 import SiteHeader from "@/components/SiteHeader";
 import BookmarkButton from "@/components/BookmarkButton";
 import { getCompanyById } from "@/lib/data";
@@ -65,11 +66,16 @@ export default async function CompanyDetailPage({ params }: Props) {
             </div>
             <div className="flex flex-col items-end gap-2">
               <div className="text-right">
-                <p className="text-4xl font-bold tabular-nums text-primary-800">
-                  {company.friendlinessScore}
-                  <span className="text-xl font-semibold text-slate-400">/100</span>
-                </p>
-                <p className="text-xs text-slate-500">장애 친화도 점수</p>
+                <div className="flex items-start justify-end gap-1">
+                  <p className="text-4xl font-bold tabular-nums text-primary-800">
+                    {company.friendlinessScore}
+                    <span className="text-xl font-semibold text-slate-400">/100</span>
+                  </p>
+                  <div className="pt-1">
+                    <ScoreTooltip ariaLabel="장애 친화도 점수 안내" />
+                  </div>
+                </div>
+                <p className="mt-1 text-xs text-slate-500">장애 친화도 점수</p>
               </div>
               <ScoreBadge score={company.friendlinessScore} />
             </div>
