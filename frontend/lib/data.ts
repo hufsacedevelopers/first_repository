@@ -83,7 +83,8 @@ export async function getLiveJobsTotal(): Promise<number> {
   if (!shouldUseApi()) return mockJobs.length;
   try {
     return await api.liveJobsTotal();
-  } catch {
+  } catch (error) {
+    disableApiTemporarily(error);
     return mockJobs.length;
   }
 }
