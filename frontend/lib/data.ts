@@ -11,11 +11,22 @@ function shouldUseApi(): boolean {
   return Date.now() >= apiDisabledUntil;
 }
 
+function apiErrorSummary(error: unknown): string {
+  if (!(error instanceof Error)) return String(error);
+  const cause = error.cause;
+  if (cause instanceof Error && "code" in cause) {
+    const code = (cause as NodeJS.ErrnoException).code;
+    if (code === "ECONNREFUSED") {
+      return "ECONNREFUSED — 백엔드(예: 127.0.0.1:8000)가 꺼져 있거나 주소가 다릅니다.";
+    }
+  }
+  return error.message;
+}
+
 function disableApiTemporarily(reason: unknown): void {
   apiDisabledUntil = Date.now() + API_RETRY_COOLDOWN_MS;
   console.warn(
-    `API unavailable, fallback to mock for ${API_RETRY_COOLDOWN_MS / 1000}s.`,
-    reason
+    `API unavailable, fallback to mock for ${API_RETRY_COOLDOWN_MS / 1000}s: ${apiErrorSummary(reason)}`
   );
 }
 
