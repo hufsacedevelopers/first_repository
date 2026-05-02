@@ -22,7 +22,7 @@ def fetch_standard_workplaces(page_no: int = 1, num_of_rows: int = 20) -> dict[s
     if not api_key:
         raise HTTPException(
             status_code=500,
-            detail="DATA_GO_API_KEY(또는 ODCLOUD_API_KEY)가 설정되지 않았습니다.",
+            detail="DATA_GO_API_KEY·B552583_API_KEY·ODCLOUD_API_KEY 중 하나가 설정되어야 합니다.",
         )
 
     url = f"{settings.data_go_base_url}/comp_auth"
@@ -44,6 +44,14 @@ def fetch_standard_workplaces(page_no: int = 1, num_of_rows: int = 20) -> dict[s
         root = ElementTree.fromstring(response.content)
     except ElementTree.ParseError as exc:
         raise HTTPException(status_code=502, detail="표준사업장 API XML 파싱 실패") from exc
+
+    result_code = root.findtext(".//resultCode")
+    if result_code and result_code not in ("00", "0000"):
+        result_msg = root.findtext(".//resultMsg") or "외부 API 오류"
+        raise HTTPException(
+            status_code=502,
+            detail=f"표준사업장 API 오류({result_code}): {result_msg}",
+        )
 
     # 공공데이터 XML 공통 구조(response/body/items/item)를 기준으로 파싱
     items = root.findall(".//item")

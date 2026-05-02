@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
+from typing import Self
 
-from pydantic import field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parents[3]
@@ -23,10 +24,22 @@ class Settings(BaseSettings):
     data_go_base_url: str = "https://apis.data.go.kr/B552583/comp"
     data_go_api_key: str = ""
     data_go_job_base_url: str = "https://apis.data.go.kr/B552583/job"
+    # 공공데이터포털에서 예전에 쓰던 이름; DATA_GO_API_KEY가 비었을 때만 data.go.kr에 전달
+    b552583_api_key: str = Field(default="", validation_alias="B552583_API_KEY")
 
     # 경기도 Open API (장애인활동지원기관현황)
     gg_api_key: str = ""
     gg_api_base_url: str = "https://openapi.gg.go.kr/DisaActvSuprtInstList"
+
+    @model_validator(mode="after")
+    def resolve_data_go_api_key(self) -> Self:
+        primary = (self.data_go_api_key or "").strip()
+        legacy = (self.b552583_api_key or "").strip()
+        if primary:
+            return self
+        if legacy:
+            object.__setattr__(self, "data_go_api_key", legacy)
+        return self
 
     @field_validator("cors_origins", mode="before")
     @classmethod

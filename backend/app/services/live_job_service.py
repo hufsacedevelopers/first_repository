@@ -29,7 +29,10 @@ def _int_from_xml(root: ElementTree.Element, path: str, fallback: int) -> int:
 def _request_job_api(path: str, page_no: int, num_of_rows: int) -> ElementTree.Element:
     api_key = settings.data_go_api_key or settings.odcloud_api_key
     if not api_key:
-        raise HTTPException(status_code=500, detail="DATA_GO_API_KEY(또는 ODCLOUD_API_KEY)가 필요합니다.")
+        raise HTTPException(
+            status_code=500,
+            detail="DATA_GO_API_KEY, B552583_API_KEY, ODCLOUD_API_KEY 중 하나가 필요합니다.",
+        )
 
     url = f"{settings.data_go_job_base_url}{path}"
     params = {"serviceKey": api_key, "pageNo": str(page_no), "numOfRows": str(num_of_rows)}

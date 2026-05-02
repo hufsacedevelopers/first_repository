@@ -8,10 +8,10 @@ export default function SiteHeader() {
         <Link
           href="/"
           className="flex shrink-0 items-end gap-2.5"
-          aria-label="Connectable 홈으로"
+          aria-label="Choicework 홈으로"
         >
           <Image
-            src="/connetable.png"
+            src="/choicework.png"
             alt=""
             width={256}
             height={256}
@@ -19,7 +19,7 @@ export default function SiteHeader() {
             priority
           />
           <Image
-            src="/connectable_text.png"
+            src="/choicework_text.png"
             alt=""
             width={520}
             height={120}
