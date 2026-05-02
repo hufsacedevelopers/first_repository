@@ -49,16 +49,25 @@ def fetch_standard_workplaces(page_no: int = 1, num_of_rows: int = 20) -> dict[s
     items = root.findall(".//item")
     parsed_data: list[dict[str, str]] = []
     for item in items:
-        parsed_data.append(
-            {
-                "certificationNumber": _text(item, "authNum", "certNo", "인증번호"),
-                "certificationDate": _text(item, "authDate", "certDate", "인증일자"),
-                "businessRegistrationNumber": _text(item, "bizrno", "brno", "사업자등록번호"),
-                "workplaceName": _text(item, "cmpnm", "compNm", "사업체명"),
-                "address": _text(item, "adres", "addr", "사업체주소"),
-                "phoneNumber": _text(item, "telno", "tel", "사업체연락처"),
-            }
-        )
+        entry = {
+            "certificationNumber": _text(
+                item, "authNum", "authNo", "crtfcNo", "certNo", "stdEntrpsNo", "인증번호"
+            ),
+            "certificationDate": _text(
+                item, "authDate", "authDt", "authYmd", "certDate", "인증일자"
+            ),
+            "businessRegistrationNumber": _text(
+                item, "bizrno", "bizrNo", "bsno", "brno", "사업자등록번호"
+            ),
+            "workplaceName": _text(
+                item, "cmpnm", "cmpnNm", "compNm", "wkplceNm", "compnm", "bizplcNm", "사업체명"
+            ),
+            "address": _text(
+                item, "adres", "addr", "roadNmAddr", "lotNoAddr", "adrs", "사업체주소"
+            ),
+            "phoneNumber": _text(item, "telno", "telNo", "tel", "사업체연락처"),
+        }
+        parsed_data.append(entry)
 
     def _int_from_xml(path: str, fallback: int) -> int:
         value = root.findtext(path)

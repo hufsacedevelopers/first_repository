@@ -21,7 +21,21 @@
       "PowerShell($resp = Invoke-WebRequest -Uri \"http://127.0.0.1:8000/jobs/live-with-env?pageNo=1&numOfRows=3\" -UseBasicParsing; $data = $resp.Content | ConvertFrom-Json; Write-Output \"totalCount: $\\($data.totalCount\\)\"; foreach \\($item in $data.data\\) { Write-Output \"$\\($item.jobName\\) | envStndWalk: $\\($item.envStndWalk\\) | envEyesight: $\\($item.envEyesight\\)\" })",
       "PowerShell($resp = try { Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 5 } catch { $null }; if \\($resp\\) { Write-Output \"Frontend up: $\\($resp.StatusCode\\)\" } else { Write-Output \"Frontend down\" })",
       "PowerShell(Get-Command *)",
-      "PowerShell(Start-Sleep -Seconds 12; $resp = try { Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 10 } catch { $null }; if \\($resp\\) { Write-Output \"Status: $\\($resp.StatusCode\\)\"; $html = $resp.Content; if \\($html -match '접근성 \\\\d+점'\\) { Write-Output \"접근성점수=FOUND: $\\($Matches[0]\\)\" } else { Write-Output \"접근성점수=NOT FOUND\" }; if \\($html -match 'AI'\\) { Write-Output \"AI text still present\" } else { Write-Output \"AI text clean\" } } else { Write-Output \"Still down, checking logs...\"; Get-Content \"C:\\\\first_repository\\\\frontend_stderr.log\" -Tail 20 })"
+      "PowerShell(Start-Sleep -Seconds 12; $resp = try { Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 10 } catch { $null }; if \\($resp\\) { Write-Output \"Status: $\\($resp.StatusCode\\)\"; $html = $resp.Content; if \\($html -match '접근성 \\\\d+점'\\) { Write-Output \"접근성점수=FOUND: $\\($Matches[0]\\)\" } else { Write-Output \"접근성점수=NOT FOUND\" }; if \\($html -match 'AI'\\) { Write-Output \"AI text still present\" } else { Write-Output \"AI text clean\" } } else { Write-Output \"Still down, checking logs...\"; Get-Content \"C:\\\\first_repository\\\\frontend_stderr.log\" -Tail 20 })",
+      "Bash(Get-ChildItem -Path \"C:\\\\first_repository\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\first_repository\\\\frontend\\\\app\" -Recurse | Where-Object {$_.Extension -in @\\('.tsx', '.ts', '.jsx', '.js'\\)} | Select-Object -ExpandProperty FullName | Sort-Object)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\first_repository\\\\backend\\\\app\" -Recurse | Where-Object {$_.Extension -eq '.py'} | Select-Object -ExpandProperty FullName | Sort-Object)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\first_repository\" -File | Where-Object {$_.Extension -in @\\('.json', '.md', '.txt'\\)} | Select-Object -ExpandProperty FullName)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\first_repository\\\\frontend\" -Recurse -File | Where-Object {$_.Name -eq 'types.ts' -or $_.Name -eq 'types.d.ts'} | Select-Object -ExpandProperty FullName)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\first_repository\\\\frontend\" -Directory | Where-Object {$_.Name -eq 'src' -or $_.Name -eq 'types' -or $_.Name -eq '@types'})",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\first_repository\\\\backend\\\\app\" -Recurse -File | Where-Object {$_.Extension -eq '.py'} | Group-Object -Property Directory | ForEach-Object { $_.Name; $_.Group | ForEach-Object { \"  - $\\($_.Name\\)\" } })",
+      "WebFetch(domain:data.gg.go.kr)",
+      "Bash(Get-ChildItem -Path \"C:\\\\first_repository\\\\backend\" -Recurse -Force)",
+      "Bash(Select-Object -Property FullName, PSIsContainer)",
+      "Bash(Sort-Object FullName)",
+      "Bash(ConvertTo-Json -Depth 50)"
     ]
   }
 }

@@ -175,6 +175,14 @@ export default async function JobDetailPage({ params }: Props) {
             <div className="mt-6 rounded-xl border border-primary-100 bg-primary-50/40 p-4 text-sm text-primary-900">
               한국장애인고용공단(1588-1519)을 통해 구직 상담 및 취업 지원 서비스를 받을 수 있습니다.
             </div>
+            <a
+              href="https://www.kead.or.kr/view/service/service02_06.jsp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            >
+              공단에 지원 상담 신청 →
+            </a>
           </section>
         )}
 
@@ -192,6 +200,14 @@ export default async function JobDetailPage({ params }: Props) {
           >
             지원금 계산하기
           </Link>
+          <a
+            href="https://www.kead.or.kr/view/service/service02_06.jsp"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
+          >
+            공단 지원 상담 신청 →
+          </a>
         </div>
       </main>
     </div>

@@ -21,8 +21,10 @@ const DISABILITY_FILTER: Record<string, (job: Job) => boolean> = {
     job.envEyesight !== "아주 작은 글씨를 읽을 수 있음",
   청각장애: (job) =>
     job.envLstnTalk !== "듣고 말하기에 어려움 없음",
-  상지장애: (job) =>
-    !job.envBothHands || job.envBothHands === "한손작업 가능",
+  발달장애: (job) =>
+    (!job.envLiftPower || !job.envLiftPower.includes("20Kg")) &&
+    job.envStndWalk !== "오랫동안 가능",
+  기타: () => true,
 };
 
 function matchesFilter(
@@ -85,7 +87,8 @@ export default async function RecommendationsPage({ searchParams }: Recommendati
                 <option value="지체장애">지체장애 — 서기/걷기 부담 낮은 공고</option>
                 <option value="시각장애">시각장애 — 시력 요구 낮은 공고</option>
                 <option value="청각장애">청각장애 — 청력 요구 낮은 공고</option>
-                <option value="상지장애">상지장애 — 한손 작업 가능 공고</option>
+                <option value="발달장애">발달장애 — 중량 작업이 적은 공고</option>
+                <option value="기타">기타 장애 — 환경 조건 무관 전체 공고</option>
               </select>
             </label>
 
@@ -143,13 +146,13 @@ export default async function RecommendationsPage({ searchParams }: Recommendati
         </section>
 
         {/* 필터 안내 배너 */}
-        {disabilityType && DISABILITY_FILTER[disabilityType] && (
+        {disabilityType && DISABILITY_FILTER[disabilityType] && disabilityType !== "기타" && (
           <div className="mt-4 rounded-2xl border border-primary-200 bg-primary-50/60 px-5 py-3 text-sm text-primary-900">
             <span className="font-semibold">{disabilityType}</span> 필터 적용 중 —{" "}
             {disabilityType === "지체장애" && "장시간 서 있는 작업을 요구하지 않는 공고"}
             {disabilityType === "시각장애" && "아주 작은 글씨 판독이 불필요한 공고"}
             {disabilityType === "청각장애" && "완전한 청력·대화 능력이 불필요한 공고"}
-            {disabilityType === "상지장애" && "한손 작업이 가능한 공고"}
+            {disabilityType === "발달장애" && "중량 작업이 적고 장시간 기립 작업이 없는 공고"}
             만 표시합니다.
           </div>
         )}

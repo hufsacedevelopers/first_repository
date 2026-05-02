@@ -20,6 +20,9 @@ export interface Company {
   monthlySupportLabel?: string;
   annualSupportLabel?: string;
   subScores?: CompanySubScores;
+  // 생활 접근성 (경기도 장애인활동지원기관 데이터 기반)
+  accessibilityScore?: number; // 0~1 정규화 점수
+  compositeScore?: number;     // 종합 점수 0~100
 }
 
 export interface Job {

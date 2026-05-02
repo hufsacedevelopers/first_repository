@@ -143,6 +143,49 @@ export default async function CompanyDetailPage({ params }: Props) {
           </dl>
         </section>
 
+        {/* 생활 접근성 점수 */}
+        {company.accessibilityScore != null && (
+          <section className="mt-6 rounded-3xl border border-blue-200 bg-blue-50/40 p-8 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+              Life Accessibility
+            </p>
+            <h2 className="mt-2 text-xl font-bold text-slate-900">생활 접근성</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              경기도 장애인활동지원 기관 분포를 기반으로 산출한 지역 생활 접근성 지표입니다.
+            </p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl border border-blue-100 bg-white p-5 text-center">
+                <p className="text-xs text-blue-600">생활 접근성 점수</p>
+                <p className="mt-2 text-2xl font-bold tabular-nums text-blue-900">
+                  {Math.round(company.accessibilityScore * 100)}
+                  <span className="text-sm font-normal text-slate-400">/100</span>
+                </p>
+                <p className="mt-1 text-xs text-slate-400">활동지원 기관 밀도 기준</p>
+              </div>
+              {company.compositeScore != null && (
+                <div className="rounded-2xl border border-primary-100 bg-white p-5 text-center">
+                  <p className="text-xs text-primary-700">종합 점수</p>
+                  <p className="mt-2 text-2xl font-bold tabular-nums text-primary-900">
+                    {company.compositeScore}
+                    <span className="text-sm font-normal text-slate-400">/100</span>
+                  </p>
+                  <p className="mt-1 text-xs text-slate-400">고용 70% + 생활 30%</p>
+                </div>
+              )}
+              <div className="flex flex-col justify-center rounded-2xl bg-slate-50 p-5">
+                <p className="text-xs font-medium text-slate-500">종합 점수 산출 방식</p>
+                <ul className="mt-2 space-y-1 text-xs text-slate-600">
+                  <li>· 기업 친화도 점수 × 0.7</li>
+                  <li>· 생활 접근성 점수 × 0.3</li>
+                  <li className="mt-2 text-slate-400">
+                    활동지원기관이 많은 지역일수록<br />생활 접근성이 높습니다.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* 지원금 안내 */}
         {(company.monthlySupportLabel || company.annualSupportLabel) && (
           <section className="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50/40 p-8 shadow-sm">

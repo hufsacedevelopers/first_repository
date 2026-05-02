@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     data_go_api_key: str = ""
     data_go_job_base_url: str = "https://apis.data.go.kr/B552583/job"
 
+    # 경기도 Open API (장애인활동지원기관현황)
+    gg_api_key: str = ""
+    gg_api_base_url: str = "https://openapi.gg.go.kr/DisaActvSuprtInstList"
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def parse_cors_origins(cls, value: object) -> list[str]:

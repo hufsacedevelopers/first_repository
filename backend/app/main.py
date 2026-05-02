@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.routers.accessibility import router as accessibility_router
 from app.routers.companies import router as companies_router
 from app.routers.health import router as health_router
 from app.routers.incentives import router as incentives_router
@@ -25,3 +26,4 @@ app.include_router(jobs_router)
 app.include_router(standard_workplaces_router)
 app.include_router(supports_router)
 app.include_router(incentives_router)
+app.include_router(accessibility_router)
