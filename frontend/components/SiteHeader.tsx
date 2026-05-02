@@ -7,15 +7,23 @@ export default function SiteHeader() {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         <Link
           href="/"
-          className="flex shrink-0 items-center"
-          aria-label="홈으로"
+          className="flex shrink-0 items-end gap-2.5"
+          aria-label="Connectable 홈으로"
         >
           <Image
             src="/connetable.png"
-            alt="Connetable"
+            alt=""
             width={256}
             height={256}
-            className="h-12 w-auto object-contain"
+            className="h-12 w-auto shrink-0 object-contain"
+            priority
+          />
+          <Image
+            src="/connectable_text.png"
+            alt=""
+            width={520}
+            height={120}
+            className="h-9 w-auto max-h-12 shrink-0 object-contain object-bottom md:h-10"
             priority
           />
         </Link>
