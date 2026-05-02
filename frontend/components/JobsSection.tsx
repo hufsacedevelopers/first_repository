@@ -4,9 +4,45 @@ import { Job } from "@/types";
 
 interface JobsSectionProps {
   jobs: Job[];
+  /** 홈 미리보기: 헤더 생략, 카드 개수 제한·하단 안내 링크 */
+  variant?: "full" | "preview";
+  previewLimit?: number;
 }
 
-export default function JobsSection({ jobs }: JobsSectionProps) {
+export default function JobsSection({
+  jobs,
+  variant = "full",
+  previewLimit = 2,
+}: JobsSectionProps) {
+  const list = variant === "preview" ? jobs.slice(0, previewLimit) : jobs;
+
+  if (variant === "preview") {
+    return (
+      <div className="space-y-6">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">미리보기</p>
+        <div className="grid gap-6 md:grid-cols-2">
+          {list.map((job) => (
+            <JobCard key={job.id} job={job} />
+          ))}
+        </div>
+        <div className="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:flex-wrap sm:items-center">
+          <Link
+            href="/recommendations"
+            className="inline-flex items-center justify-center rounded-xl bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+          >
+            추천 페이지로 이동 · 전체 검색
+          </Link>
+          <Link
+            href="/recommendations"
+            className="text-center text-sm font-semibold text-primary-800 underline-offset-4 hover:underline sm:text-left"
+          >
+            더 많은 일자리 보기 →
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section id="jobs" className="scroll-mt-20 space-y-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -30,7 +66,7 @@ export default function JobsSection({ jobs }: JobsSectionProps) {
         </Link>
       </div>
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {jobs.map((job) => (
+        {list.map((job) => (
           <JobCard key={job.id} job={job} />
         ))}
       </div>

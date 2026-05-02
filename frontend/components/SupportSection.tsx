@@ -7,29 +7,34 @@ const programs = [
     title: "장애인 고용장려금",
     summary: "월 최대 80만원까지 고용장려금 지원",
     target: "중증장애인 채용 기업",
-    amount: "최대 960만원/년"
+    amount: "최대 960만원/년",
   },
   {
     title: "근로지원인 서비스",
     summary: "직무 수행을 위한 근로지원인 지원",
     target: "중증장애인 근로자",
-    amount: "월 160시간"
+    amount: "월 160시간",
   },
   {
     title: "보조공학기기 지원",
     summary: "업무 수행에 필요한 보조공학기기 지원",
     target: "장애인 근로자",
-    amount: "최대 3,000만원"
+    amount: "최대 3,000만원",
   },
   {
     title: "직업능력개발 훈련",
     summary: "직무 역량 향상을 위한 교육훈련 지원",
     target: "장애인 구직자",
-    amount: "전액 무료"
-  }
+    amount: "전액 무료",
+  },
 ];
 
-export default function SupportSection() {
+type SupportSectionProps = {
+  /** 홈 STEP 3 안에 넣을 때: 상단 큰 제목 생략, 루트는 div(section 중첩 방지) */
+  embedded?: boolean;
+};
+
+export default function SupportSection({ embedded = false }: SupportSectionProps) {
   const [employmentType, setEmploymentType] = useState<"정규직" | "계약직">("정규직");
   const [disabilityLevel, setDisabilityLevel] = useState<"중증" | "경증">("중증");
   const [headcount, setHeadcount] = useState(1);
@@ -42,24 +47,30 @@ export default function SupportSection() {
     const perPersonAnnual = perPersonMonthly * 12;
     return {
       monthlyMan: perPersonMonthly * headcount,
-      annualMan: perPersonAnnual * headcount
+      annualMan: perPersonAnnual * headcount,
     };
   }, [employmentType, disabilityLevel, headcount]);
 
-  return (
-    <section id="support" className="scroll-mt-20 space-y-10">
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
+  const inner = (
+    <>
+      {!embedded ? (
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
+            Support Programs
+          </p>
+          <h2 className="mt-2 text-2xl font-bold text-slate-900 md:text-3xl">
+            지원금 계산기 · 얼마를 받을 수 있나요?
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
+            채용 조건을 입력하면 받을 수 있는 정부 지원금을 간단히 산출해 참고할 수 있습니다. (실제
+            금액은 신청 조건 및 시행 규정에 따릅니다.)
+          </p>
+        </div>
+      ) : (
+        <p className="text-xs font-semibold uppercase tracking-wide text-primary-700">
           Support Programs
         </p>
-        <h2 className="mt-2 text-2xl font-bold text-slate-900 md:text-3xl">
-          지원금 계산기 · 얼마를 받을 수 있나요?
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
-          채용 조건을 입력하면 받을 수 있는 정부 지원금을 간단히 산출해 참고할 수 있습니다. (실제
-          금액은 신청 조건 및 시행 규정에 따릅니다.)
-        </p>
-      </div>
+      )}
 
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
         {programs.map((p) => (
@@ -170,6 +181,25 @@ export default function SupportSection() {
           </div>
         </div>
       </div>
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <div
+        id="support"
+        role="region"
+        aria-label="지원금 프로그램 및 계산기"
+        className="space-y-10"
+      >
+        {inner}
+      </div>
+    );
+  }
+
+  return (
+    <section id="support" className="scroll-mt-20 space-y-10">
+      {inner}
     </section>
   );
 }

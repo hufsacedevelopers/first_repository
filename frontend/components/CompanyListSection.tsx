@@ -1,12 +1,48 @@
 import CompanyScoreCard from "@/components/CompanyScoreCard";
 import MethodologyBlock from "@/components/MethodologyBlock";
+import Link from "next/link";
 import { Company } from "@/types";
 
 interface CompanyListSectionProps {
   companies: Company[];
+  variant?: "full" | "preview";
+  previewLimit?: number;
 }
 
-export default function CompanyListSection({ companies }: CompanyListSectionProps) {
+export default function CompanyListSection({
+  companies,
+  variant = "full",
+  previewLimit = 2,
+}: CompanyListSectionProps) {
+  const list = variant === "preview" ? companies.slice(0, previewLimit) : companies;
+  const firstId = companies[0]?.id;
+
+  if (variant === "preview") {
+    return (
+      <div className="space-y-6">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">미리보기</p>
+        <div id="companies" className="grid gap-6 scroll-mt-24 md:grid-cols-2">
+          {list.map((company) => (
+            <CompanyScoreCard key={company.companyName} company={company} />
+          ))}
+        </div>
+        <div className="flex flex-col gap-2 border-t border-slate-100 pt-6">
+          <p className="text-xs text-slate-500">
+            카드를 눌러 표준사업장·고용 현황·지원금 예시를 상세 페이지에서 확인할 수 있습니다.
+          </p>
+          {firstId != null ? (
+            <Link
+              href={`/company/${firstId}`}
+              className="inline-flex text-sm font-semibold text-primary-800 underline-offset-4 hover:underline"
+            >
+              기업 평가 더 보기 → 상세 예시
+            </Link>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section id="companies" className="scroll-mt-20 space-y-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -28,7 +64,7 @@ export default function CompanyListSection({ companies }: CompanyListSectionProp
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {companies.map((company) => (
+        {list.map((company) => (
           <CompanyScoreCard key={company.companyName} company={company} />
         ))}
       </div>
