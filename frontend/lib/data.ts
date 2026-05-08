@@ -61,6 +61,11 @@ export async function getJobById(id: string): Promise<Job | null> {
   const idx = parseInt(id, 10);
   if (isNaN(idx) || idx < 0) return null;
 
+  const keadJobs = await getMergedKeadJobs(Math.max(PAGE_SIZE, idx + 1));
+  if (keadJobs.length > idx) {
+    return keadJobs[idx] ?? null;
+  }
+
   if (!shouldUseApi()) return mockJobs[idx] ?? null;
 
   const page = Math.floor(idx / PAGE_SIZE) + 1;

@@ -153,21 +153,56 @@ export async function getMergedKeadJobs(pageNo = 1, numOfRows = 50): Promise<Job
   if (!serviceKey) return [];
 
   try {
+    const buildMergeKey = (item: JobListItem) =>
+      [
+        item.busplaName ?? "",
+        item.jobNm ?? "",
+        item.offerregDt ?? "",
+        item.cntctNo ?? "",
+        item.regDt ?? "",
+        item.compAddr ?? "",
+      ].join("|");
+
+    const fetchPaged = async <T extends JobListItem>(
+      endpoint: "job_list" | "job_list_env"
+    ): Promise<{ resultCode: string; resultMsg: string; totalCount: number; items: T[] }> => {
+      const first = await fetchKeadJobEndpoint<T>(endpoint, { pageNo, numOfRows: 100, serviceKey });
+      if (first.resultCode !== "0000") return first;
+
+      const maxPagesByTarget = Math.max(1, Math.ceil(numOfRows / 100));
+      const maxPagesByTotal = Math.max(1, Math.ceil(first.totalCount / 100));
+      const pageCount = Math.min(5, Math.max(maxPagesByTarget, Math.min(3, maxPagesByTotal)));
+      if (pageCount === 1) {
+        return { ...first, items: first.items.slice(0, numOfRows) };
+      }
+
+      const extraCalls: Promise<{ resultCode: string; resultMsg: string; totalCount: number; items: T[] }>[] = [];
+      for (let p = pageNo + 1; p < pageNo + pageCount; p += 1) {
+        extraCalls.push(fetchKeadJobEndpoint<T>(endpoint, { pageNo: p, numOfRows: 100, serviceKey }));
+      }
+      const extra = await Promise.all(extraCalls);
+      const mergedItems = [
+        ...first.items,
+        ...extra.filter((result) => result.resultCode === "0000").flatMap((result) => result.items),
+      ];
+      return { ...first, items: mergedItems.slice(0, numOfRows) };
+    };
+
     const [raw, env] = await Promise.all([
-      fetchKeadJobEndpoint<JobListItem>("job_list", { pageNo, numOfRows, serviceKey }),
-      fetchKeadJobEndpoint<JobListEnvItem>("job_list_env", { pageNo, numOfRows, serviceKey }),
+      fetchPaged<JobListItem>("job_list"),
+      fetchPaged<JobListEnvItem>("job_list_env"),
     ]);
 
     if (env.resultCode !== "0000" && raw.resultCode !== "0000") return [];
 
     const rawMap = new Map<string, JobListItem>();
     for (const item of raw.items) {
-      const key = `${item.busplaName ?? ""}|${item.jobNm ?? ""}|${item.offerregDt ?? ""}`;
+      const key = buildMergeKey(item);
       rawMap.set(key, item);
     }
 
     const merged = env.items.map((envItem) => {
-      const key = `${envItem.busplaName ?? ""}|${envItem.jobNm ?? ""}|${envItem.offerregDt ?? ""}`;
+      const key = buildMergeKey(envItem);
       return {
         ...rawMap.get(key),
         ...envItem,

@@ -15,6 +15,9 @@ function countBy<T>(items: T[], getKey: (item: T) => string): Array<{ label: str
 
 export default async function JobInsightsPage() {
   const [jobs, comparison] = await Promise.all([getJobs(200), getLiveJobsComparison()]);
+  const missingEnvCount = Math.max(0, comparison.jobListTotal - comparison.jobListEnvTotal);
+  const missingEnvRate =
+    comparison.jobListTotal > 0 ? Math.round((missingEnvCount / comparison.jobListTotal) * 1000) / 10 : 0;
 
   const byEmploymentType = countBy(jobs, (job) => job.employmentType || "기타");
   const byRegion = countBy(jobs, (job) => {
@@ -35,7 +38,7 @@ export default async function JobInsightsPage() {
           <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
             전체 공고 수 <span className="font-semibold text-slate-900">{jobs.length}</span>건
           </div>
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
               <p className="text-xs text-slate-500">job_list</p>
               <p className="mt-1 text-lg font-bold text-slate-900">{comparison.jobListTotal.toLocaleString()}건</p>
@@ -52,6 +55,13 @@ export default async function JobInsightsPage() {
                 {(comparison.jobListTotal - comparison.jobListEnvTotal).toLocaleString()}건
               </p>
               <p className="text-xs text-slate-500">환경필드 포함 여부에 따른 차이</p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+              <p className="text-xs text-slate-500">환경필드 누락률</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">{missingEnvRate}%</p>
+              <p className="text-xs text-slate-500">
+                누락 {missingEnvCount.toLocaleString()}건 / 전체 {comparison.jobListTotal.toLocaleString()}건
+              </p>
             </div>
           </div>
         </section>
