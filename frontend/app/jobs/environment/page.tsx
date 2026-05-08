@@ -10,17 +10,31 @@ type EnvironmentPageProps = {
 };
 
 const ENV_FILTERS = [
-  { key: "standing-light", label: "장시간 서기 부담 낮음" },
-  { key: "hearing-light", label: "청취/대화 부담 낮음" },
-  { key: "vision-light", label: "시력 요구 부담 낮음" },
-  { key: "lifting-light", label: "중량물 부담 낮음" },
+  {
+    key: "standing-light",
+    label: "장시간 서기 부담 낮음",
+    predicate: (job: Job) => !!job.envStndWalk && !job.envStndWalk.includes("오랫동안 가능"),
+  },
+  {
+    key: "hearing-light",
+    label: "청취/대화 부담 낮음",
+    predicate: (job: Job) => !!job.envLstnTalk && !job.envLstnTalk.includes("어려움 없음"),
+  },
+  {
+    key: "vision-light",
+    label: "시력 요구 부담 낮음",
+    predicate: (job: Job) => !!job.envEyesight && !job.envEyesight.includes("아주 작은 글씨"),
+  },
+  {
+    key: "lifting-light",
+    label: "중량물 부담 낮음",
+    predicate: (job: Job) => !job.envLiftPower || !job.envLiftPower.includes("20Kg"),
+  },
 ] as const;
 
 function matchesEnvironment(job: Job, filterKey: string): boolean {
-  if (filterKey === "standing-light") return job.envStndWalk !== "오랫동안 가능";
-  if (filterKey === "hearing-light") return job.envLstnTalk !== "듣고 말하기에 어려움 없음";
-  if (filterKey === "vision-light") return job.envEyesight !== "아주 작은 글씨를 읽을 수 있음";
-  if (filterKey === "lifting-light") return !job.envLiftPower || !job.envLiftPower.includes("20Kg");
+  const found = ENV_FILTERS.find((filter) => filter.key === filterKey);
+  if (found) return found.predicate(job);
   return true;
 }
 
@@ -30,7 +44,10 @@ export default async function EnvironmentPage({ searchParams }: EnvironmentPageP
   const isValid = ENV_FILTERS.some((filter) => filter.key === selectedEnv);
 
   const jobs = await getJobs(100);
-  const filteredJobs = isValid ? jobs.filter((job) => matchesEnvironment(job, selectedEnv)) : [];
+  const envSourceJobs = jobs.filter(
+    (job) => job.envStndWalk || job.envLstnTalk || job.envEyesight || job.envLiftPower
+  );
+  const filteredJobs = isValid ? envSourceJobs.filter((job) => matchesEnvironment(job, selectedEnv)) : [];
 
   return (
     <div className="min-h-screen bg-page">
@@ -57,6 +74,10 @@ export default async function EnvironmentPage({ searchParams }: EnvironmentPageP
               </Link>
             ))}
           </div>
+          <p className="mt-3 text-xs text-slate-500">
+            API 원문 환경필드(`envStndWalk`, `envLstnTalk`, `envEyesight`, `envLiftPower`)가 있는 공고만
+            분석 대상으로 사용합니다.
+          </p>
         </section>
 
         <section className="mt-8 space-y-4">

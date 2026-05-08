@@ -1,5 +1,5 @@
 import SiteHeader from "@/components/SiteHeader";
-import { getJobs } from "@/lib/data";
+import { getJobs, getLiveJobsComparison } from "@/lib/data";
 
 function countBy<T>(items: T[], getKey: (item: T) => string): Array<{ label: string; count: number }> {
   const map = new Map<string, number>();
@@ -14,7 +14,7 @@ function countBy<T>(items: T[], getKey: (item: T) => string): Array<{ label: str
 }
 
 export default async function JobInsightsPage() {
-  const jobs = await getJobs(200);
+  const [jobs, comparison] = await Promise.all([getJobs(200), getLiveJobsComparison()]);
 
   const byEmploymentType = countBy(jobs, (job) => job.employmentType || "기타");
   const byRegion = countBy(jobs, (job) => {
@@ -34,6 +34,25 @@ export default async function JobInsightsPage() {
           </p>
           <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
             전체 공고 수 <span className="font-semibold text-slate-900">{jobs.length}</span>건
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+              <p className="text-xs text-slate-500">job_list</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">{comparison.jobListTotal.toLocaleString()}건</p>
+              <p className="text-xs text-slate-500">resultCode: {comparison.jobListResultCode}</p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+              <p className="text-xs text-slate-500">job_list_env</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">{comparison.jobListEnvTotal.toLocaleString()}건</p>
+              <p className="text-xs text-slate-500">resultCode: {comparison.jobListEnvResultCode}</p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+              <p className="text-xs text-slate-500">차이(job_list-env)</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">
+                {(comparison.jobListTotal - comparison.jobListEnvTotal).toLocaleString()}건
+              </p>
+              <p className="text-xs text-slate-500">환경필드 포함 여부에 따른 차이</p>
+            </div>
           </div>
         </section>
 

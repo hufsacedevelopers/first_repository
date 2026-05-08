@@ -1,6 +1,7 @@
 import { Company, Job } from "@/types";
 import { api } from "./api";
 import { companies as mockCompanies, jobs as mockJobs } from "./mockData";
+import { getKeadJobComparison, getMergedKeadJobs } from "./kead-jobs";
 
 const USE_MOCK = !process.env.NEXT_PUBLIC_API_URL;
 const API_RETRY_COOLDOWN_MS = 30_000;
@@ -42,6 +43,9 @@ export async function getCompanies(): Promise<Company[]> {
 }
 
 export async function getJobs(numOfRows = 20): Promise<Job[]> {
+  const keadJobs = await getMergedKeadJobs(1, numOfRows);
+  if (keadJobs.length > 0) return keadJobs;
+
   if (!shouldUseApi()) return mockJobs;
   try {
     return await api.liveJobsWithEnv(1, numOfRows);
@@ -80,6 +84,12 @@ export async function getCompanyById(id: string): Promise<Company | null> {
 }
 
 export async function getLiveJobsTotal(): Promise<number> {
+  const keadJobs = await getMergedKeadJobs(1, 1);
+  if (keadJobs.length > 0) {
+    const comparison = await getKeadJobComparison(1, 1);
+    return comparison.jobListEnvTotal || comparison.jobListTotal || keadJobs.length;
+  }
+
   if (!shouldUseApi()) return mockJobs.length;
   try {
     return await api.liveJobsTotal();
@@ -87,4 +97,8 @@ export async function getLiveJobsTotal(): Promise<number> {
     disableApiTemporarily(error);
     return mockJobs.length;
   }
+}
+
+export async function getLiveJobsComparison() {
+  return getKeadJobComparison(1, 1);
 }
