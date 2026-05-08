@@ -54,6 +54,42 @@ def _request_job_api(path: str, page_no: int, num_of_rows: int) -> ElementTree.E
     return root
 
 
+def _request_job_api_json(path: str, page_no: int, num_of_rows: int) -> dict[str, Any]:
+    api_key = settings.data_go_api_key or settings.odcloud_api_key
+    if not api_key:
+        raise HTTPException(
+            status_code=500,
+            detail="DATA_GO_API_KEY, B552583_API_KEY, ODCLOUD_API_KEY 중 하나가 필요합니다.",
+        )
+
+    url = f"{settings.data_go_job_base_url}{path}"
+    params = {
+        "serviceKey": api_key,
+        "pageNo": str(page_no),
+        "numOfRows": str(num_of_rows),
+        "_type": "json",
+    }
+    try:
+        response = requests.get(url, params=params, timeout=20)
+        response.raise_for_status()
+        payload = response.json()
+    except requests.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"구인 API HTTP 오류: {exc}") from exc
+    except requests.RequestException as exc:
+        raise HTTPException(status_code=502, detail=f"구인 API 요청 실패: {exc}") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=502, detail="구인 API JSON 파싱 실패") from exc
+
+    response_payload = payload.get("response", {})
+    header = response_payload.get("header", {})
+    result_code = str(header.get("resultCode", ""))
+    if result_code and result_code not in ("00", "0000"):
+        result_msg = str(header.get("resultMsg", "외부 API 오류"))
+        raise HTTPException(status_code=502, detail=f"구인 API 오류({result_code}): {result_msg}")
+
+    return response_payload.get("body", {})
+
+
 def fetch_live_jobs(page_no: int = 1, num_of_rows: int = 20) -> dict[str, Any]:
     root = _request_job_api("/job_list", page_no, num_of_rows)
     items = root.findall(".//item")
@@ -119,4 +155,131 @@ def fetch_live_jobs_with_env(page_no: int = 1, num_of_rows: int = 20) -> dict[st
         "numOfRows": _int_from_xml(root, ".//numOfRows", num_of_rows),
         "totalCount": _int_from_xml(root, ".//totalCount", len(data)),
         "data": data,
+    }
+
+
+def _safe_items(body: dict[str, Any]) -> list[dict[str, Any]]:
+    item = body.get("items", {}).get("item", [])
+    if isinstance(item, list):
+        return item
+    if isinstance(item, dict):
+        return [item]
+    return []
+
+
+def _normalize_item(item: dict[str, Any], with_env: bool) -> dict[str, str]:
+    base = {
+        "recruitmentPeriod": str(item.get("termDate", "")).strip(),
+        "businessName": str(item.get("busplaName", "")).strip(),
+        "contactNumber": str(item.get("cntctNo", "")).strip(),
+        "companyAddress": str(item.get("compAddr", "")).strip(),
+        "employmentType": str(item.get("empType", "")).strip(),
+        "entryType": str(item.get("enterType", "")).strip(),
+        "jobName": str(item.get("jobNm", "")).strip(),
+        "applicationDate": str(item.get("offerregDt", "")).strip(),
+        "registeredAt": str(item.get("regDt", "")).strip(),
+        "agencyName": str(item.get("regagnName", "")).strip(),
+        "requiredCareer": str(item.get("reqCareer", "")).strip(),
+        "requiredEducation": str(item.get("reqEduc", "")).strip(),
+        "salaryType": str(item.get("salaryType", "")).strip(),
+        "salary": str(item.get("salary", "")).strip(),
+    }
+    if with_env:
+        base.update(
+            {
+                "envBothHands": str(item.get("envBothHands", "")).strip(),
+                "envEyesight": str(item.get("envEyesight", "")).strip(),
+                "envHandwork": str(item.get("envHandwork", "")).strip(),
+                "envLiftPower": str(item.get("envLiftPower", "")).strip(),
+                "envLstnTalk": str(item.get("envLstnTalk", "")).strip(),
+                "envStndWalk": str(item.get("envStndWalk", "")).strip(),
+            }
+        )
+    return base
+
+
+def _merge_key(item: dict[str, str]) -> str:
+    return "|".join(
+        [
+            item.get("businessName", ""),
+            item.get("jobName", ""),
+            item.get("applicationDate", ""),
+            item.get("contactNumber", ""),
+            item.get("registeredAt", ""),
+            item.get("companyAddress", ""),
+        ]
+    )
+
+
+def fetch_live_jobs_merged(page_no: int = 1, num_of_rows: int = 20) -> dict[str, Any]:
+    # 1회 호출 기준 최대 100건으로 끊어 멀티 페이지 조회
+    page_size = 100
+    target_count = max(1, num_of_rows)
+    max_pages_by_target = max(1, (target_count + page_size - 1) // page_size)
+    page_count = min(5, max_pages_by_target)
+
+    raw_items: list[dict[str, str]] = []
+    env_items: list[dict[str, str]] = []
+    raw_total = 0
+    env_total = 0
+    collected_pages = 0
+
+    for offset in range(page_count):
+        current_page = page_no + offset
+        raw_body = _request_job_api_json("/job_list", current_page, page_size)
+        env_body = _request_job_api_json("/job_list_env", current_page, page_size)
+        collected_pages += 1
+
+        raw_total = max(raw_total, int(raw_body.get("totalCount", 0) or 0))
+        env_total = max(env_total, int(env_body.get("totalCount", 0) or 0))
+
+        raw_items.extend(_normalize_item(item, with_env=False) for item in _safe_items(raw_body))
+        env_items.extend(_normalize_item(item, with_env=True) for item in _safe_items(env_body))
+
+        if len(env_items) >= target_count:
+            break
+
+    raw_map = {_merge_key(item): item for item in raw_items}
+    merged: list[dict[str, str]] = []
+    matched_count = 0
+    for env_item in env_items:
+        key = _merge_key(env_item)
+        if key in raw_map:
+            matched_count += 1
+        merged.append({**raw_map.get(key, {}), **env_item})
+        if len(merged) >= target_count:
+            break
+
+    merge_rate = round((matched_count / len(merged)) * 100, 1) if merged else 0.0
+
+    return {
+        "pageNo": page_no,
+        "numOfRows": target_count,
+        "totalCount": env_total or raw_total or len(merged),
+        "data": merged,
+        "meta": {
+            "requestedCount": target_count,
+            "collectedPages": collected_pages,
+            "rawCollectedCount": len(raw_items),
+            "envCollectedCount": len(env_items),
+            "mergedCount": len(merged),
+            "mergeMatchRate": merge_rate,
+            "rawTotalCount": raw_total,
+            "envTotalCount": env_total,
+        },
+    }
+
+
+def fetch_live_jobs_comparison(page_no: int = 1, num_of_rows: int = 1) -> dict[str, Any]:
+    raw_body = _request_job_api_json("/job_list", page_no, num_of_rows)
+    env_body = _request_job_api_json("/job_list_env", page_no, num_of_rows)
+    raw_total = int(raw_body.get("totalCount", 0) or 0)
+    env_total = int(env_body.get("totalCount", 0) or 0)
+    missing = max(0, raw_total - env_total)
+    missing_rate = round((missing / raw_total) * 100, 1) if raw_total > 0 else 0.0
+    return {
+        "jobListTotal": raw_total,
+        "jobListEnvTotal": env_total,
+        "missingEnvCount": missing,
+        "missingEnvRate": missing_rate,
     }

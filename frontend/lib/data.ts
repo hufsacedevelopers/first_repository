@@ -43,6 +43,15 @@ export async function getCompanies(): Promise<Company[]> {
 }
 
 export async function getJobs(numOfRows = 20): Promise<Job[]> {
+  if (shouldUseApi()) {
+    try {
+      const mergedFromBackend = await api.liveJobsMerged(1, numOfRows);
+      if (mergedFromBackend.length > 0) return mergedFromBackend;
+    } catch (error) {
+      disableApiTemporarily(error);
+    }
+  }
+
   const keadJobs = await getMergedKeadJobs(1, numOfRows);
   if (keadJobs.length > 0) return keadJobs;
 
@@ -89,6 +98,17 @@ export async function getCompanyById(id: string): Promise<Company | null> {
 }
 
 export async function getLiveJobsTotal(): Promise<number> {
+  if (shouldUseApi()) {
+    try {
+      const comparison = await api.liveJobsComparison();
+      if (comparison.jobListEnvTotal > 0 || comparison.jobListTotal > 0) {
+        return comparison.jobListEnvTotal || comparison.jobListTotal;
+      }
+    } catch (error) {
+      disableApiTemporarily(error);
+    }
+  }
+
   const keadJobs = await getMergedKeadJobs(1, 1);
   if (keadJobs.length > 0) {
     const comparison = await getKeadJobComparison(1, 1);
@@ -105,5 +125,30 @@ export async function getLiveJobsTotal(): Promise<number> {
 }
 
 export async function getLiveJobsComparison() {
+  if (shouldUseApi()) {
+    try {
+      const comparison = await api.liveJobsComparison();
+      return {
+        jobListTotal: comparison.jobListTotal,
+        jobListEnvTotal: comparison.jobListEnvTotal,
+        jobListResultCode: "0000",
+        jobListEnvResultCode: "0000",
+      };
+    } catch (error) {
+      disableApiTemporarily(error);
+    }
+  }
+
   return getKeadJobComparison(1, 1);
+}
+
+export async function getLiveJobsMergedMeta() {
+  if (shouldUseApi()) {
+    try {
+      return await api.liveJobsMergedMeta(1, 200);
+    } catch (error) {
+      disableApiTemporarily(error);
+    }
+  }
+  return null;
 }

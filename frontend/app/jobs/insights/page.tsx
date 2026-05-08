@@ -1,5 +1,5 @@
 import SiteHeader from "@/components/SiteHeader";
-import { getJobs, getLiveJobsComparison } from "@/lib/data";
+import { getJobs, getLiveJobsComparison, getLiveJobsMergedMeta } from "@/lib/data";
 
 function countBy<T>(items: T[], getKey: (item: T) => string): Array<{ label: string; count: number }> {
   const map = new Map<string, number>();
@@ -14,7 +14,11 @@ function countBy<T>(items: T[], getKey: (item: T) => string): Array<{ label: str
 }
 
 export default async function JobInsightsPage() {
-  const [jobs, comparison] = await Promise.all([getJobs(200), getLiveJobsComparison()]);
+  const [jobs, comparison, mergedMeta] = await Promise.all([
+    getJobs(200),
+    getLiveJobsComparison(),
+    getLiveJobsMergedMeta(),
+  ]);
   const missingEnvCount = Math.max(0, comparison.jobListTotal - comparison.jobListEnvTotal);
   const missingEnvRate =
     comparison.jobListTotal > 0 ? Math.round((missingEnvCount / comparison.jobListTotal) * 1000) / 10 : 0;
@@ -64,6 +68,37 @@ export default async function JobInsightsPage() {
               </p>
             </div>
           </div>
+        </section>
+
+        <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-bold text-slate-900">백엔드 수집/병합 메타</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            `/jobs/live-merged` 기준 운영 모니터링 지표입니다.
+          </p>
+          {mergedMeta ? (
+            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <p className="text-xs text-slate-500">실제 수집 페이지 수</p>
+                <p className="mt-1 text-lg font-bold text-slate-900">{mergedMeta.collectedPages}p</p>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <p className="text-xs text-slate-500">병합 매칭률</p>
+                <p className="mt-1 text-lg font-bold text-slate-900">{mergedMeta.mergeMatchRate}%</p>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <p className="text-xs text-slate-500">원천 수집 건수(raw/env)</p>
+                <p className="mt-1 text-lg font-bold text-slate-900">
+                  {mergedMeta.rawCollectedCount}/{mergedMeta.envCollectedCount}
+                </p>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <p className="text-xs text-slate-500">병합 결과 건수</p>
+                <p className="mt-1 text-lg font-bold text-slate-900">{mergedMeta.mergedCount}건</p>
+              </div>
+            </div>
+          ) : (
+            <p className="mt-4 text-sm text-slate-600">백엔드 메타를 가져오지 못해 표시하지 않습니다.</p>
+          )}
         </section>
 
         <section className="mt-8 grid gap-6 md:grid-cols-2">

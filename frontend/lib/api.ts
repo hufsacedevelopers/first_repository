@@ -44,6 +44,19 @@ interface LiveJobsResponse {
   data: LiveJobItem[];
 }
 
+interface LiveJobsMergedResponse extends LiveJobsResponse {
+  meta: {
+    requestedCount: number;
+    collectedPages: number;
+    rawCollectedCount: number;
+    envCollectedCount: number;
+    mergedCount: number;
+    mergeMatchRate: number;
+    rawTotalCount: number;
+    envTotalCount: number;
+  };
+}
+
 function mapEmploymentType(raw: string): string {
   const map: Record<string, string> = {
     "상용직": "정규직",
@@ -138,4 +151,23 @@ export const api = {
     const res = await get<LiveJobsResponse>("/jobs/live-with-env?pageNo=1&numOfRows=1");
     return res.totalCount;
   },
+  liveJobsMerged: async (pageNo = 1, numOfRows = 20): Promise<Job[]> => {
+    const res = await get<LiveJobsMergedResponse>(
+      `/jobs/live-merged?pageNo=${pageNo}&numOfRows=${numOfRows}`
+    );
+    return res.data.map(mapLiveJobToJob);
+  },
+  liveJobsMergedMeta: async (pageNo = 1, numOfRows = 20) => {
+    const res = await get<LiveJobsMergedResponse>(
+      `/jobs/live-merged?pageNo=${pageNo}&numOfRows=${numOfRows}`
+    );
+    return res.meta;
+  },
+  liveJobsComparison: () =>
+    get<{
+      jobListTotal: number;
+      jobListEnvTotal: number;
+      missingEnvCount: number;
+      missingEnvRate: number;
+    }>("/jobs/live-comparison?pageNo=1&numOfRows=1"),
 };

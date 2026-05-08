@@ -39,3 +39,18 @@ class LiveJobWithEnvResponse(BaseModel):
     numOfRows: int
     totalCount: int
     data: list[LiveJobWithEnv]
+
+
+class LiveJobMergedMeta(BaseModel):
+    requestedCount: int
+    collectedPages: int
+    rawCollectedCount: int
+    envCollectedCount: int
+    mergedCount: int
+    mergeMatchRate: float
+    rawTotalCount: int
+    envTotalCount: int
+
+
+class LiveJobMergedResponse(LiveJobWithEnvResponse):
+    meta: LiveJobMergedMeta
