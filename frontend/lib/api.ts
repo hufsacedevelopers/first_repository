@@ -1,6 +1,9 @@
 import { Company, Job } from "@/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  (process.env.NODE_ENV === "production" ? "" : "http://localhost:8000");
 
 async function get<T>(path: string): Promise<T> {
   let res: Response;
@@ -139,7 +142,15 @@ function mapLiveJobToJob(item: LiveJobItem, index: number): Job {
 }
 
 export const api = {
-  companies: () => get<Company[]>("/companies"),
+  companies: () =>
+    get<
+      | Company[]
+      | {
+          source: "live" | "static";
+          syncedAt: string;
+          data: Company[];
+        }
+    >("/companies"),
   jobs: () => get<Job[]>("/jobs"),
   liveJobsWithEnv: async (pageNo = 1, numOfRows = 20): Promise<Job[]> => {
     const res = await get<LiveJobsResponse>(

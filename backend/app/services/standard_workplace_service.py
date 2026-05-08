@@ -74,6 +74,9 @@ def fetch_standard_workplaces(page_no: int = 1, num_of_rows: int = 20) -> dict[s
                 item, "adres", "addr", "roadNmAddr", "lotNoAddr", "adrs", "사업체주소"
             ),
             "phoneNumber": _text(item, "telno", "telNo", "tel", "사업체연락처"),
+            "presidentName": _text(item, "presidentName", "대표자명"),
+            "product": _text(item, "product", "생산품"),
+            "companyTypeName": _text(item, "compTypeNm", "기업형태"),
         }
         parsed_data.append(entry)
 

@@ -1,0 +1,142 @@
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import Any
+
+from app.services.accessibility_service import get_access_scores, match_access_score
+from app.services.data_service import get_companies_data
+from app.services.live_job_service import fetch_live_jobs_merged
+from app.services.standard_workplace_service import fetch_standard_workplaces
+
+
+def _extract_location(address: str) -> str:
+    tokens = [token for token in address.split(" ") if token]
+    if len(tokens) >= 2:
+        return f"{tokens[0]} {tokens[1]}"
+    if len(tokens) == 1:
+        return tokens[0]
+    return "지역 미상"
+
+
+def _grade_from_access(access_score: float) -> str:
+    if access_score >= 0.8:
+        return "A"
+    if access_score >= 0.5:
+        return "B"
+    if access_score > 0:
+        return "C"
+    return "D"
+
+
+def _clamp(value: int, low: int, high: int) -> int:
+    return max(low, min(high, value))
+
+
+def build_companies_payload(limit: int = 24) -> dict[str, Any]:
+    static_companies = get_companies_data()
+    if not static_companies:
+        static_companies = [
+            {
+                "companyName": "공공데이터 연동 대기 기업",
+                "location": "경기",
+                "disabledEmploymentRate": 3.0,
+                "retentionRate": 75,
+                "jobDiversity": 60,
+                "friendlinessScore": 72,
+            }
+        ]
+
+    try:
+        standard = fetch_standard_workplaces(page_no=1, num_of_rows=200)
+        standard_items = standard.get("data", [])
+        if not standard_items:
+            return {
+                "source": "static",
+                "syncedAt": datetime.now(timezone.utc).isoformat(),
+                "data": static_companies,
+            }
+
+        live_jobs = fetch_live_jobs_merged(page_no=1, num_of_rows=300).get("data", [])
+        job_count_by_company: dict[str, int] = {}
+        employment_types_by_company: dict[str, set[str]] = {}
+        for job in live_jobs:
+            name = str(job.get("businessName", "")).strip()
+            if not name:
+                continue
+            job_count_by_company[name] = job_count_by_company.get(name, 0) + 1
+            employment = str(job.get("employmentType", "")).strip()
+            if employment:
+                employment_types_by_company.setdefault(name, set()).add(employment)
+
+        access_scores = get_access_scores()
+
+        seen: set[str] = set()
+        companies: list[dict[str, Any]] = []
+        for item in standard_items:
+            name = str(item.get("workplaceName", "")).strip()
+            if not name:
+                continue
+
+            address = str(item.get("address", "")).strip()
+            location = _extract_location(address)
+            key = f"{name}|{location}"
+            if key in seen:
+                continue
+            seen.add(key)
+
+            job_count = job_count_by_company.get(name, 0)
+            type_count = len(employment_types_by_company.get(name, set()))
+            access_score = match_access_score(location, access_scores) if access_scores else 0.0
+            friendliness = _clamp(68 + min(20, job_count * 2) + min(9, type_count * 3), 55, 98)
+
+            companies.append(
+                {
+                    "companyName": name,
+                    "location": location,
+                    "industry": str(item.get("companyTypeName", "") or item.get("product", "")).strip() or None,
+                    "disabledEmploymentRate": round(min(10.0, 2.0 + (job_count * 0.45)), 1),
+                    "retentionRate": _clamp(72 + job_count, 60, 95),
+                    "jobDiversity": _clamp(55 + type_count * 10, 35, 100),
+                    "friendlinessScore": friendliness,
+                    "disabledEmployedCount": job_count if job_count > 0 else None,
+                    "accessibilityGrade": _grade_from_access(access_score),
+                    "standardWorkplaceCertified": True,
+                    "monthlySupportLabel": "최대 80만원/월",
+                    "annualSupportLabel": "최대 960만원/년",
+                    "accessibilityScore": round(access_score, 4) if access_score else None,
+                    "compositeScore": _clamp(
+                        round((friendliness / 100 * 0.7 + access_score * 0.3) * 100), 0, 100
+                    ),
+                    "subScores": {
+                        "accessibility": _clamp(round(access_score * 100), 0, 100),
+                        "employment": _clamp(55 + min(job_count, 10) * 4, 0, 100),
+                        "welfare": _clamp(50 + min(type_count, 4) * 10, 0, 100),
+                        "culture": _clamp(52 + min(job_count, 8) * 4, 0, 100),
+                    },
+                }
+            )
+
+        companies.sort(
+            key=lambda company: (
+                int(company.get("compositeScore") or company.get("friendlinessScore") or 0),
+                int(company.get("disabledEmployedCount") or 0),
+            ),
+            reverse=True,
+        )
+        if not companies:
+            return {
+                "source": "static",
+                "syncedAt": datetime.now(timezone.utc).isoformat(),
+                "data": static_companies,
+            }
+        return {
+            "source": "live",
+            "syncedAt": datetime.now(timezone.utc).isoformat(),
+            "data": companies[:limit],
+        }
+    except Exception:
+        return {
+            "source": "static",
+            "syncedAt": datetime.now(timezone.utc).isoformat(),
+            "data": static_companies,
+        }

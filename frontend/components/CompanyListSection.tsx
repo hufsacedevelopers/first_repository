@@ -5,12 +5,16 @@ import { Company } from "@/types";
 
 interface CompanyListSectionProps {
   companies: Company[];
+  source?: "live" | "static";
+  syncedAt?: string | null;
   variant?: "full" | "preview";
   previewLimit?: number;
 }
 
 export default function CompanyListSection({
   companies,
+  source = "static",
+  syncedAt = null,
   variant = "full",
   previewLimit = 2,
 }: CompanyListSectionProps) {
@@ -59,9 +63,14 @@ export default function CompanyListSection({
           </p>
         </div>
         <span className="inline-flex shrink-0 items-center rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-900">
-          기업 비교 모드
+          {source === "live" ? "실시간 데이터" : "정적 데이터"}
         </span>
       </div>
+      {source === "live" && syncedAt ? (
+        <p className="text-xs text-slate-500">
+          최근 동기화: {new Date(syncedAt).toLocaleString("ko-KR")}
+        </p>
+      ) : null}
 
       <div className="grid gap-6 lg:grid-cols-3">
         {list.map((company) => (

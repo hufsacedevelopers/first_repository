@@ -3,7 +3,9 @@ import { api } from "./api";
 import { companies as mockCompanies, jobs as mockJobs } from "./mockData";
 import { getKeadJobComparison, getMergedKeadJobs } from "./kead-jobs";
 
-const USE_MOCK = !process.env.NEXT_PUBLIC_API_URL;
+const USE_MOCK = !(process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL);
+const ALLOW_MOCK_FALLBACK =
+  process.env.NEXT_PUBLIC_ALLOW_MOCK_FALLBACK === "true" || process.env.NODE_ENV !== "production";
 const API_RETRY_COOLDOWN_MS = 30_000;
 let apiDisabledUntil = 0;
 
@@ -27,18 +29,48 @@ function apiErrorSummary(error: unknown): string {
 function disableApiTemporarily(reason: unknown): void {
   apiDisabledUntil = Date.now() + API_RETRY_COOLDOWN_MS;
   console.warn(
-    `API unavailable, fallback to mock for ${API_RETRY_COOLDOWN_MS / 1000}s: ${apiErrorSummary(reason)}`
+    `API unavailable for ${API_RETRY_COOLDOWN_MS / 1000}s: ${apiErrorSummary(reason)}`
   );
 }
 
 export async function getCompanies(): Promise<Company[]> {
-  if (!shouldUseApi()) return mockCompanies;
+  const result = await getCompaniesWithMeta();
+  return result.companies;
+}
+
+export async function getCompaniesWithMeta(): Promise<{
+  source: "live" | "static";
+  syncedAt: string | null;
+  companies: Company[];
+}> {
+  if (!shouldUseApi()) {
+    return {
+      source: "static",
+      syncedAt: null,
+      companies: ALLOW_MOCK_FALLBACK ? mockCompanies : [],
+    };
+  }
   try {
     const raw = await api.companies();
-    return raw.map((c, i) => ({ ...c, id: String(i) }));
+    if (Array.isArray(raw)) {
+      return {
+        source: "static",
+        syncedAt: null,
+        companies: raw.map((c, i) => ({ ...c, id: String(i) })),
+      };
+    }
+    return {
+      source: raw.source ?? "static",
+      syncedAt: raw.syncedAt ?? null,
+      companies: raw.data.map((c, i) => ({ ...c, id: String(i) })),
+    };
   } catch (error) {
     disableApiTemporarily(error);
-    return mockCompanies;
+    return {
+      source: "static",
+      syncedAt: null,
+      companies: ALLOW_MOCK_FALLBACK ? mockCompanies : [],
+    };
   }
 }
 
@@ -55,12 +87,12 @@ export async function getJobs(numOfRows = 20): Promise<Job[]> {
   const keadJobs = await getMergedKeadJobs(1, numOfRows);
   if (keadJobs.length > 0) return keadJobs;
 
-  if (!shouldUseApi()) return mockJobs;
+  if (!shouldUseApi()) return ALLOW_MOCK_FALLBACK ? mockJobs : [];
   try {
     return await api.liveJobsWithEnv(1, numOfRows);
   } catch (error) {
     disableApiTemporarily(error);
-    return mockJobs;
+    return ALLOW_MOCK_FALLBACK ? mockJobs : [];
   }
 }
 
@@ -75,7 +107,7 @@ export async function getJobById(id: string): Promise<Job | null> {
     return keadJobs[idx] ?? null;
   }
 
-  if (!shouldUseApi()) return mockJobs[idx] ?? null;
+  if (!shouldUseApi()) return ALLOW_MOCK_FALLBACK ? (mockJobs[idx] ?? null) : null;
 
   const page = Math.floor(idx / PAGE_SIZE) + 1;
   const localIdx = idx % PAGE_SIZE;
@@ -88,7 +120,7 @@ export async function getJobById(id: string): Promise<Job | null> {
       : null;
   } catch (error) {
     disableApiTemporarily(error);
-    return mockJobs[idx] ?? null;
+    return ALLOW_MOCK_FALLBACK ? (mockJobs[idx] ?? null) : null;
   }
 }
 
@@ -115,12 +147,12 @@ export async function getLiveJobsTotal(): Promise<number> {
     return comparison.jobListEnvTotal || comparison.jobListTotal || keadJobs.length;
   }
 
-  if (!shouldUseApi()) return mockJobs.length;
+  if (!shouldUseApi()) return ALLOW_MOCK_FALLBACK ? mockJobs.length : 0;
   try {
     return await api.liveJobsTotal();
   } catch (error) {
     disableApiTemporarily(error);
-    return mockJobs.length;
+    return ALLOW_MOCK_FALLBACK ? mockJobs.length : 0;
   }
 }
 

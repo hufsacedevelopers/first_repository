@@ -34,22 +34,28 @@ export default function ScoreTooltip({
   return (
     <div
       ref={wrapRef}
-      className="relative inline-flex flex-col items-center gap-1"
+      className="relative inline-flex items-center"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
       {visible ? (
-        <span
-          id={tipId}
-          role="tooltip"
-          className="order-1 w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-[11px] leading-relaxed text-slate-700 shadow-lg ring-1 ring-black/[0.06]"
-        >
-          {content}
-        </span>
+        <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2">
+          <span
+            id={tipId}
+            role="tooltip"
+            className="pointer-events-auto block rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-[11px] leading-relaxed text-slate-700 shadow-lg ring-1 ring-black/[0.06]"
+          >
+            {content}
+          </span>
+          <span
+            aria-hidden
+            className="mx-auto block h-2 w-2 -translate-y-[1px] rotate-45 border-b border-r border-slate-200 bg-white"
+          />
+        </div>
       ) : null}
       <button
         type="button"
-        className="order-2 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-[10px] font-bold leading-none text-slate-600 shadow-sm hover:border-primary-400 hover:text-primary-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-[10px] font-bold leading-none text-slate-600 shadow-sm hover:border-primary-400 hover:text-primary-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
         aria-label={ariaLabel}
         aria-expanded={visible}
         aria-describedby={visible ? tipId : undefined}

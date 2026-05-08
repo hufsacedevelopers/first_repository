@@ -11,10 +11,14 @@ def test_health():
     assert res.json() == {"status": "ok"}
 
 
-def test_companies_returns_list():
+def test_companies_returns_payload():
     res = client.get("/companies")
     assert res.status_code == 200
-    data = res.json()
+    payload = res.json()
+    assert isinstance(payload, dict)
+    assert payload.get("source") in ("live", "static")
+    assert "data" in payload
+    data = payload["data"]
     assert isinstance(data, list)
     assert len(data) > 0
     assert "companyName" in data[0]
