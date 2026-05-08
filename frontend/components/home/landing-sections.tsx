@@ -120,7 +120,7 @@ export function LandingHero({ liveJobsTotal }: LandingHeroProps) {
             {NEIGHBORHOODS.map((name, index) => (
               <li key={`${name}-${index}`}>
                 <Link
-                  href={`/recommendations?region=${encodeURIComponent(name)}`}
+                  href={`/jobs/regions?region=${encodeURIComponent(name)}`}
                   className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                 >
                   {name}

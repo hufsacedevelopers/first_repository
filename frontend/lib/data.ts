@@ -92,7 +92,12 @@ export async function getJobs(numOfRows = 20): Promise<Job[]> {
     return await api.liveJobsWithEnv(1, numOfRows);
   } catch (error) {
     disableApiTemporarily(error);
-    return ALLOW_MOCK_FALLBACK ? mockJobs : [];
+    try {
+      const fallbackJobs = await api.jobs();
+      return fallbackJobs.slice(0, numOfRows);
+    } catch {
+      return ALLOW_MOCK_FALLBACK ? mockJobs : [];
+    }
   }
 }
 
@@ -152,7 +157,12 @@ export async function getLiveJobsTotal(): Promise<number> {
     return await api.liveJobsTotal();
   } catch (error) {
     disableApiTemporarily(error);
-    return ALLOW_MOCK_FALLBACK ? mockJobs.length : 0;
+    try {
+      const fallbackJobs = await api.jobs();
+      return fallbackJobs.length;
+    } catch {
+      return ALLOW_MOCK_FALLBACK ? mockJobs.length : 0;
+    }
   }
 }
 
