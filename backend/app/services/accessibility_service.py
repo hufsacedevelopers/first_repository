@@ -1,7 +1,7 @@
 """경기도 장애인활동지원 기관 현황 기반 생활 접근성 점수 산출 서비스.
 
 외부 API: 경기도 Open API (openapi.gg.go.kr)
-데이터셋: 시군별 장애인활동지원 기관 현황
+데이터셋: 시군별 장애인활동 지원 기관 현황 (`Ggsigundspsnactsport`)
 점수 로직: access_score = 시군 기관수 / 최대 기관수  (0~1 정규화)
 종합 점수: composite = base_score * 0.7 + access_score * 0.3
 """
@@ -32,29 +32,72 @@ _cache: dict[str, float] = {}
 _cache_ts: float = 0.0
 
 
+def _rows_from_gg_json_payload(raw: Any) -> list[dict[str, Any]]:
+    """경기도 Open API JSON에서 row 목록을 추출합니다.
+
+    지원 형태:
+    - 객체 루트: ``{"Ggsigundspsnactsport": [{"head": ...}, {"row": [...]}]}`` 등
+    - 배열 루트(구형): ``[{"SomeService": [{"head": ...}, {"row": [...]}]}]``
+    """
+    # 1) 루트가 dict — 시군별 장애인활동 지원 기관(Ggsigundspsnactsport) 등
+    if isinstance(raw, dict):
+        for _svc, blocks in raw.items():
+            if not isinstance(blocks, list):
+                continue
+            row_block = next((b for b in blocks if isinstance(b, dict) and "row" in b), None)
+            if not row_block:
+                continue
+            rows = row_block.get("row")
+            if isinstance(rows, list):
+                return [r for r in rows if isinstance(r, dict)]
+            if isinstance(rows, dict):
+                return [rows]
+        return []
+
+    # 2) 루트가 list — 구형 DisaActvSuprtInstList 등 [{서비스명: [블록들]}]
+    if isinstance(raw, list) and raw:
+        first = raw[0]
+        if isinstance(first, dict) and first:
+            service_name = next(iter(first))
+            blocks = first.get(service_name)
+            if isinstance(blocks, list):
+                row_block = next((b for b in blocks if isinstance(b, dict) and "row" in b), None)
+                if row_block:
+                    rows = row_block.get("row")
+                    if isinstance(rows, list):
+                        return [r for r in rows if isinstance(r, dict)]
+                    if isinstance(rows, dict):
+                        return [rows]
+    return []
+
+
 def fetch_accessibility_institutions(
     page_no: int = 1,
     page_size: int = 1000,
+    sigun_nm: str | None = None,
 ) -> list[dict[str, Any]]:
     """경기도 Open API에서 장애인활동지원 기관 목록을 가져옵니다.
 
     - API 키가 없거나 호출 실패 시 빈 리스트 반환 (graceful fallback)
-    - 경기도 Open API 응답 구조: [{ServiceName: [{head: ...}, {row: [...]}]}]
+    - 기본 데이터셋: `Ggsigundspsnactsport` (시군별 장애인활동 지원 기관 현황)
+    - ``sigun_nm``이 있으면 Open API 요청인자 ``SIGUN_NM``으로 해당 시군만 조회합니다.
     """
     if not settings.gg_api_key:
         logger.warning("GG_API_KEY가 설정되지 않아 접근성 데이터를 불러올 수 없습니다.")
         return []
 
-    params = {
+    params: dict[str, str | int] = {
         "KEY": settings.gg_api_key,
         "Type": "json",
         "pIndex": page_no,
         "pSize": page_size,
     }
+    if sigun_nm and sigun_nm.strip():
+        params["SIGUN_NM"] = sigun_nm.strip()
     try:
         resp = requests.get(settings.gg_api_base_url, params=params, timeout=20)
         resp.raise_for_status()
-        raw: list[dict[str, Any]] = resp.json()
+        raw = resp.json()
     except requests.RequestException as exc:
         logger.warning("경기도 API 요청 실패: %s", exc)
         return []
@@ -62,16 +105,10 @@ def fetch_accessibility_institutions(
         logger.warning("경기도 API 응답 JSON 파싱 실패")
         return []
 
-    # 응답 구조 파싱: [{서비스명: [{head}, {row: [...]}]}]
-    try:
-        service_data = raw[0]
-        service_name = next(iter(service_data))          # 서비스명 키 동적 추출
-        blocks: list[dict[str, Any]] = service_data[service_name]
-        row_block = next((b for b in blocks if "row" in b), None)
-        return row_block["row"] if row_block else []
-    except (IndexError, KeyError, StopIteration, TypeError) as exc:
-        logger.warning("경기도 API 응답 구조 파싱 실패: %s", exc)
-        return []
+    rows = _rows_from_gg_json_payload(raw)
+    if not rows:
+        logger.warning("경기도 API 응답에서 row를 찾지 못했습니다. URL·응답 형식을 확인하세요.")
+    return rows
 
 
 def aggregate_by_sigun(institutions: list[dict[str, Any]]) -> dict[str, int]:

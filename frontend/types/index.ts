@@ -25,6 +25,34 @@ export interface Company {
   compositeScore?: number;     // 종합 점수 0~100
 }
 
+/** GET /accessibility */
+export interface AccessibilitySummary {
+  regions: {
+    sigunNm: string;
+    institutionCount: number;
+    accessScore: number;
+  }[];
+  maxCount: number;
+  totalInstitutions: number;
+}
+
+/** GET /accessibility/institutions */
+export interface ActivitySupportInstitution {
+  sigunCd: string;
+  sigunNm: string;
+  instNm: string;
+  actAsstnSalaryDivNm: string;
+  visitBathSalaryDivNm: string;
+  visitNurngSalaryDivNm: string;
+  refineLotnoAddr: string;
+  refineRoadnmAddr: string;
+  refineZipCd: string;
+  refineWgs84Lat: string;
+  refineWgs84Logt: string;
+  telno: string;
+  hmpgUrl: string;
+}
+
 export interface Job {
   id: string;
   title: string;

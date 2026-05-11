@@ -1,4 +1,4 @@
-import { Company, Job } from "@/types";
+import { AccessibilitySummary, ActivitySupportInstitution, Company, Job } from "@/types";
 import { api } from "./api";
 import { companies as mockCompanies, jobs as mockJobs } from "./mockData";
 import { getKeadJobComparison, getMergedKeadJobs } from "./kead-jobs";
@@ -31,6 +31,38 @@ function disableApiTemporarily(reason: unknown): void {
   console.warn(
     `API unavailable for ${API_RETRY_COOLDOWN_MS / 1000}s: ${apiErrorSummary(reason)}`
   );
+}
+
+const emptyAccessibilitySummary: AccessibilitySummary = {
+  regions: [],
+  maxCount: 0,
+  totalInstitutions: 0,
+};
+
+export async function getAccessibilitySummary(): Promise<AccessibilitySummary> {
+  if (!shouldUseApi()) {
+    return emptyAccessibilitySummary;
+  }
+  try {
+    return await api.accessibilitySummary();
+  } catch (error) {
+    disableApiTemporarily(error);
+    return emptyAccessibilitySummary;
+  }
+}
+
+export async function getAccessibilityInstitutions(
+  sigunNm?: string
+): Promise<ActivitySupportInstitution[]> {
+  if (!shouldUseApi()) {
+    return [];
+  }
+  try {
+    return await api.accessibilityInstitutions(sigunNm);
+  } catch (error) {
+    disableApiTemporarily(error);
+    return [];
+  }
 }
 
 export async function getCompanies(): Promise<Company[]> {

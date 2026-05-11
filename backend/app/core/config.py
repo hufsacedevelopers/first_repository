@@ -27,9 +27,9 @@ class Settings(BaseSettings):
     # 공공데이터포털에서 예전에 쓰던 이름; DATA_GO_API_KEY가 비었을 때만 data.go.kr에 전달
     b552583_api_key: str = Field(default="", validation_alias="B552583_API_KEY")
 
-    # 경기도 Open API (장애인활동지원기관현황)
+    # 경기도 Open API (시군별 장애인활동 지원 기관 현황 — Ggsigundspsnactsport)
     gg_api_key: str = ""
-    gg_api_base_url: str = "https://openapi.gg.go.kr/DisaActvSuprtInstList"
+    gg_api_base_url: str = "https://openapi.gg.go.kr/Ggsigundspsnactsport"
 
     @model_validator(mode="after")
     def resolve_data_go_api_key(self) -> Self:

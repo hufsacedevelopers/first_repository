@@ -1,4 +1,4 @@
-import { Company, Job } from "@/types";
+import { AccessibilitySummary, ActivitySupportInstitution, Company, Job } from "@/types";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ??
@@ -142,6 +142,14 @@ function mapLiveJobToJob(item: LiveJobItem, index: number): Job {
 }
 
 export const api = {
+  accessibilitySummary: () => get<AccessibilitySummary>("/accessibility"),
+  accessibilityInstitutions: (sigunNm?: string) => {
+    const q =
+      sigunNm && sigunNm.trim()
+        ? `?sigunNm=${encodeURIComponent(sigunNm.trim())}`
+        : "";
+    return get<ActivitySupportInstitution[]>(`/accessibility/institutions${q}`);
+  },
   companies: () =>
     get<
       | Company[]
