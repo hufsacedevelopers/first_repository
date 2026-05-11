@@ -9,30 +9,43 @@ export default async function SiteHeader() {
   const isLoggedIn = cookieStore.get(DEMO_USER_COOKIE)?.value === "1";
 
   return (
-    <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+    <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-        <Link
-          href="/"
-          className="flex shrink-0 items-end gap-2.5"
-          aria-label="Choicework 홈으로"
-        >
-          <Image
-            src="/choicework.png"
-            alt=""
-            width={256}
-            height={256}
-            className="h-12 w-auto shrink-0 object-contain"
-            priority
-          />
-          <Image
-            src="/choicework_text.png"
-            alt=""
-            width={520}
-            height={120}
-            className="h-9 w-auto max-h-12 shrink-0 object-contain object-bottom md:h-10"
-            priority
-          />
-        </Link>
+        <div className="flex items-center gap-8">
+          <Link
+            href="/"
+            className="flex shrink-0 items-end gap-2.5"
+            aria-label="Choicework 홈으로"
+          >
+            <Image
+              src="/choicework.png"
+              alt=""
+              width={256}
+              height={256}
+              className="h-12 w-auto shrink-0 object-contain"
+              priority
+            />
+            <Image
+              src="/choicework_text.png"
+              alt=""
+              width={520}
+              height={120}
+              className="h-9 w-auto max-h-12 shrink-0 object-contain object-bottom md:h-10"
+              priority
+            />
+          </Link>
+
+          {/* 🔗 네비게이션 메뉴 추가 */}
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+              서비스 소개
+            </Link>
+            <Link href="/guide" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+              이용 가이드
+            </Link>
+          </nav>
+        </div>
+
         <div className="flex items-center gap-3">
           <Link
             href="/recommendations"
