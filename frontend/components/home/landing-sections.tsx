@@ -68,7 +68,7 @@ export function LandingHero({ liveJobsTotal }: LandingHeroProps) {
               홈 검색
             </label>
             <div className="flex items-center gap-3 rounded-full border border-slate-300 bg-white px-4 py-2.5">
-              <span className="text-xs font-semibold text-slate-500 md:text-sm">통합검색</span>
+              <span className="text-xs font-semibold text-slate-500 md:text-sm whitespace-nowrap shrink-0">통합검색</span>
               <input
                 id="hero-search"
                 name="keyword"
