@@ -40,6 +40,9 @@ export default async function SiteHeader() {
             <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
               서비스 소개
             </Link>
+            <Link href="/features" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+              핵심 기능
+            </Link>
             <Link href="/guide" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
               이용 가이드
             </Link>
