@@ -1,11 +1,9 @@
 import SupportSection from "@/components/SupportSection";
-import SiteHeader from "@/components/SiteHeader";
 import Link from "next/link";
 
 export default function SupportPage() {
   return (
     <div className="min-h-screen bg-page">
-      <SiteHeader />
       <main className="mx-auto max-w-6xl space-y-8 px-6 pb-16 pt-8">
         <SupportSection />
 

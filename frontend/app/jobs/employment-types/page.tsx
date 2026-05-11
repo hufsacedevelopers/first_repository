@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import JobCard from "@/components/JobCard";
-import SiteHeader from "@/components/SiteHeader";
 import { getJobs } from "@/lib/data";
 
 type EmploymentTypesPageProps = {
@@ -25,7 +24,6 @@ export default async function EmploymentTypesPage({ searchParams }: EmploymentTy
 
   return (
     <div className="min-h-screen bg-page">
-      <SiteHeader />
       <main className="mx-auto max-w-6xl px-6 pb-16 pt-8">
         <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">Employment Type</p>

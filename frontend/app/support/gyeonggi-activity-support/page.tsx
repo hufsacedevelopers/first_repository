@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import ActivitySupportInstitutionList from "@/components/gyeonggi/ActivitySupportInstitutionList";
 import GyeonggiSigunFilter from "@/components/gyeonggi/GyeonggiSigunFilter";
-import SiteHeader from "@/components/SiteHeader";
 import { getAccessibilityInstitutions, getAccessibilitySummary } from "@/lib/data";
 
 interface PageProps {
@@ -24,7 +23,6 @@ export default async function GyeonggiActivitySupportPage({ searchParams }: Page
 
   return (
     <div className="min-h-screen bg-page">
-      <SiteHeader />
       <main className="mx-auto max-w-6xl space-y-8 px-6 pb-16 pt-8">
         <nav className="text-sm text-slate-500">
           <Link href="/support" className="font-medium text-primary-800 hover:underline">

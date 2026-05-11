@@ -1,4 +1,3 @@
-import SiteHeader from "@/components/SiteHeader";
 import { getJobs, getLiveJobsComparison, getLiveJobsMergedMeta } from "@/lib/data";
 
 function countBy<T>(items: T[], getKey: (item: T) => string): Array<{ label: string; count: number }> {
@@ -31,7 +30,6 @@ export default async function JobInsightsPage() {
 
   return (
     <div className="min-h-screen bg-page">
-      <SiteHeader />
       <main className="mx-auto max-w-6xl px-6 pb-16 pt-8">
         <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">Job Insights</p>

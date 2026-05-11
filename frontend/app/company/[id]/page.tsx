@@ -1,5 +1,4 @@
 import ScoreTooltip from "@/components/ScoreTooltip";
-import SiteHeader from "@/components/SiteHeader";
 import BookmarkButton from "@/components/BookmarkButton";
 import { getCompanyById } from "@/lib/data";
 import Link from "next/link";
@@ -42,7 +41,6 @@ export default async function CompanyDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-page">
-      <SiteHeader />
       <main className="mx-auto max-w-4xl px-6 pb-16 pt-8">
         {/* 뒤로가기 */}
         <Link
