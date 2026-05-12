@@ -159,11 +159,27 @@ def fetch_live_jobs_with_env(page_no: int = 1, num_of_rows: int = 20) -> dict[st
 
 
 def _safe_items(body: dict[str, Any]) -> list[dict[str, Any]]:
-    item = body.get("items", {}).get("item", [])
-    if isinstance(item, list):
-        return item
-    if isinstance(item, dict):
-        return [item]
+    """data.go.kr JSON body에서 item 목록을 추출합니다.
+
+    - 일반: ``body["items"]["item"]`` (list | dict)
+    - 변형: ``body["items"]`` 가 곧바로 list인 경우
+    - 변형: ``body["item"]`` 만 있는 경우
+    """
+    items = body.get("items")
+    if isinstance(items, list):
+        return [x for x in items if isinstance(x, dict)]
+    if isinstance(items, dict):
+        item = items.get("item", [])
+        if isinstance(item, list):
+            return [r for r in item if isinstance(r, dict)]
+        if isinstance(item, dict):
+            return [item]
+        return []
+    lone = body.get("item")
+    if isinstance(lone, dict):
+        return [lone]
+    if isinstance(lone, list):
+        return [x for x in lone if isinstance(x, dict)]
     return []
 
 

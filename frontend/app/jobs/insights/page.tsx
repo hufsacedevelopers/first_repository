@@ -13,11 +13,12 @@ function countBy<T>(items: T[], getKey: (item: T) => string): Array<{ label: str
 }
 
 export default async function JobInsightsPage() {
-  const [jobs, comparison, mergedMeta] = await Promise.all([
+  const [jobs, comparison, merged] = await Promise.all([
     getJobs(200),
     getLiveJobsComparison(),
     getLiveJobsMergedMeta(),
   ]);
+  const { meta: mergedMeta, isEstimated } = merged;
   const missingEnvCount = Math.max(0, comparison.jobListTotal - comparison.jobListEnvTotal);
   const missingEnvRate =
     comparison.jobListTotal > 0 ? Math.round((missingEnvCount / comparison.jobListTotal) * 1000) / 10 : 0;
@@ -69,30 +70,36 @@ export default async function JobInsightsPage() {
         <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-bold text-slate-900">데이터 수집 요약</h2>
           <p className="mt-1 text-sm text-slate-500">여러 출처에서 가져온 공고를 합칠 때의 요약 지표입니다.</p>
-          {mergedMeta ? (
-            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <p className="text-xs text-slate-500">실제 수집 페이지 수</p>
-                <p className="mt-1 text-lg font-bold text-slate-900">{mergedMeta.collectedPages}p</p>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <p className="text-xs text-slate-500">병합 매칭률</p>
-                <p className="mt-1 text-lg font-bold text-slate-900">{mergedMeta.mergeMatchRate}%</p>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <p className="text-xs text-slate-500">일반·환경 포함 수집 건수</p>
-                <p className="mt-1 text-lg font-bold text-slate-900">
-                  {mergedMeta.rawCollectedCount}/{mergedMeta.envCollectedCount}
-                </p>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <p className="text-xs text-slate-500">병합 결과 건수</p>
-                <p className="mt-1 text-lg font-bold text-slate-900">{mergedMeta.mergedCount}건</p>
-              </div>
+          {isEstimated ? (
+            <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50/80 px-3 py-2 text-xs text-amber-950">
+              병합 상세 API를 쓰지 못한 경우, 상단「전체 구인 / 근무환경 포함」집계와 같은 출처로만 채운 참고치입니다.
+              서버 주소가 설정되어 있고 공공 구인 연동이 정상이면 실제 수집·병합 수치로 바뀝니다.
+            </p>
+          ) : null}
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <p className="text-xs text-slate-500">실제 수집 페이지 수</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">
+                {isEstimated ? "—" : `${mergedMeta.collectedPages}p`}
+              </p>
             </div>
-          ) : (
-            <p className="mt-4 text-sm text-slate-600">요약 정보를 불러오지 못해 표시하지 않습니다.</p>
-          )}
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <p className="text-xs text-slate-500">
+                {isEstimated ? "근무환경 공고 비중(추정)" : "병합 매칭률"}
+              </p>
+              <p className="mt-1 text-lg font-bold text-slate-900">{mergedMeta.mergeMatchRate}%</p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <p className="text-xs text-slate-500">일반·환경 포함 수집 건수</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">
+                {mergedMeta.rawCollectedCount}/{mergedMeta.envCollectedCount}
+              </p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <p className="text-xs text-slate-500">{isEstimated ? "표시 상한(추정)" : "병합 결과 건수"}</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">{mergedMeta.mergedCount}건</p>
+            </div>
+          </div>
         </section>
 
         <section className="mt-8 grid gap-6 md:grid-cols-2">

@@ -47,17 +47,19 @@ interface LiveJobsResponse {
   data: LiveJobItem[];
 }
 
+export interface LiveJobsMergedMeta {
+  requestedCount: number;
+  collectedPages: number;
+  rawCollectedCount: number;
+  envCollectedCount: number;
+  mergedCount: number;
+  mergeMatchRate: number;
+  rawTotalCount: number;
+  envTotalCount: number;
+}
+
 interface LiveJobsMergedResponse extends LiveJobsResponse {
-  meta: {
-    requestedCount: number;
-    collectedPages: number;
-    rawCollectedCount: number;
-    envCollectedCount: number;
-    mergedCount: number;
-    mergeMatchRate: number;
-    rawTotalCount: number;
-    envTotalCount: number;
-  };
+  meta: LiveJobsMergedMeta;
 }
 
 function mapEmploymentType(raw: string): string {

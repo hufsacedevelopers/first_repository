@@ -1,5 +1,5 @@
 import { AccessibilitySummary, ActivitySupportInstitution, Company, Job } from "@/types";
-import { api } from "./api";
+import { api, type LiveJobsMergedMeta } from "./api";
 import { companies as mockCompanies, jobs as mockJobs } from "./mockData";
 import { getKeadJobComparison, getMergedKeadJobs } from "./kead-jobs";
 
@@ -216,13 +216,48 @@ export async function getLiveJobsComparison() {
   return getKeadJobComparison(1, 1);
 }
 
-export async function getLiveJobsMergedMeta() {
+function estimateMergedMetaFromComparison(comparison: {
+  jobListTotal: number;
+  jobListEnvTotal: number;
+}): LiveJobsMergedMeta {
+  const rawTotal = Math.max(0, comparison.jobListTotal);
+  const envTotal = Math.max(0, comparison.jobListEnvTotal);
+  const envCapped = rawTotal > 0 ? Math.min(envTotal, rawTotal) : envTotal;
+  const coverageRate = rawTotal > 0 ? Math.min(100, Math.round((envCapped / rawTotal) * 1000) / 10) : 0;
+
+  return {
+    requestedCount: 200,
+    collectedPages: 0,
+    rawCollectedCount: rawTotal,
+    envCollectedCount: envCapped,
+    mergedCount: Math.min(envCapped, 200),
+    mergeMatchRate: coverageRate,
+    rawTotalCount: rawTotal,
+    envTotalCount: envTotal,
+  };
+}
+
+export async function getLiveJobsMergedMeta(): Promise<{
+  meta: LiveJobsMergedMeta;
+  isEstimated: boolean;
+}> {
   if (shouldUseApi()) {
     try {
-      return await api.liveJobsMergedMeta(1, 200);
+      const meta = await api.liveJobsMergedMeta(1, 200);
+      return { meta, isEstimated: false };
     } catch (error) {
       disableApiTemporarily(error);
+      const comparison = await getLiveJobsComparison();
+      return {
+        meta: estimateMergedMetaFromComparison(comparison),
+        isEstimated: true,
+      };
     }
   }
-  return null;
+
+  const comparison = await getLiveJobsComparison();
+  return {
+    meta: estimateMergedMetaFromComparison(comparison),
+    isEstimated: true,
+  };
 }
