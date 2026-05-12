@@ -11,7 +11,7 @@ const HOME_CATEGORIES = [
   { icon: "🏢", label: "기업 친화도 비교", href: "/companies" },
   { icon: "🩺", label: "근무환경 조건 탐색", href: "/jobs/environment" },
   { icon: "💼", label: "정규직/계약직 찾기", href: "/jobs/employment-types" },
-  { icon: "📍", label: "경기도 지역별 검색", href: "/jobs/regions" },
+  { icon: "📍", label: "지역별 검색", href: "/jobs/regions" },
   { icon: "📊", label: "공고 데이터 요약", href: "/jobs/insights" },
   { icon: "💰", label: "지원금 계산기", href: "/support" },
   { icon: "☎️", label: "공단 상담/신청 연결", href: "/support/consulting" },
@@ -130,7 +130,7 @@ export function LandingHero({ liveJobsTotal }: LandingHeroProps) {
           </ul>
 
           <p className="mx-auto mt-6 max-w-xl text-center text-xs text-slate-500">
-            경기도 지역/기능을 고르면 추천 페이지에서 장애 유형, 고용 형태, 근무환경 조건으로 더
+            지역·기능을 고르면 추천 페이지에서 장애 유형, 고용 형태, 근무환경 조건으로 더
             세밀하게 필터링할 수 있습니다.
           </p>
         </div>

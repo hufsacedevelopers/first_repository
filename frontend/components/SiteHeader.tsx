@@ -30,13 +30,22 @@ export default async function SiteHeader() {
               alt=""
               width={520}
               height={120}
-              className="h-9 w-auto max-h-12 shrink-0 object-contain object-bottom md:h-10"
+              className="h-8 w-auto max-h-10 shrink-0 object-contain object-bottom md:h-9"
               priority
             />
+          </Link>
+          <Link
+            href="/gigs"
+            className="shrink-0 text-sm font-semibold text-primary-700 transition hover:text-primary-900 md:hidden"
+          >
+            가벼운 일거리
           </Link>
 
           {/* 🔗 네비게이션 메뉴 추가 */}
           <nav className="hidden md:flex items-center gap-6">
+            <Link href="/gigs" className="text-sm font-semibold text-primary-700 hover:text-primary-900 transition">
+              가벼운 일거리
+            </Link>
             <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
               서비스 소개
             </Link>

@@ -43,8 +43,8 @@ export default async function RegionsPage({ searchParams }: RegionsPageProps) {
     <div className="min-h-screen bg-page">
       <main className="mx-auto max-w-6xl px-6 pb-16 pt-8">
         <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">Gyeonggi Regions</p>
-          <h1 className="mt-2 text-3xl font-bold text-slate-900">경기도 지역별 검색</h1>
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">Regional search</p>
+          <h1 className="mt-2 text-3xl font-bold text-slate-900">지역별 검색</h1>
           <p className="mt-3 text-sm text-slate-600">경기도 주요 시 기준으로 공고를 빠르게 나눠서 볼 수 있습니다.</p>
           <div className="mt-6 flex flex-wrap gap-2">
             {GYEONGGI_REGIONS.map((region) => (
