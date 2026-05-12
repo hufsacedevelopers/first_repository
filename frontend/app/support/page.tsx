@@ -10,7 +10,7 @@ export default function SupportPage() {
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-bold text-slate-900">경기도 장애인활동 지원 기관 찾기</h2>
           <p className="mt-2 text-sm text-slate-600">
-            시·군을 고르고 기관 목록·주소·연락처를 확인합니다. 경기도 Open API 실데이터를 백엔드에서 연동합니다.
+            시·군을 고르고 기관 목록·주소·연락처를 확인합니다. 경기도에서 공개하는 기관 정보와 연결되어 있습니다.
           </p>
           <Link
             href="/support/gyeonggi-activity-support"

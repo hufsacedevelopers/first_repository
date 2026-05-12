@@ -18,23 +18,20 @@ export default async function LightGigsPage({ searchParams }: PageProps) {
           <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">Light gigs</p>
           <h1 className="mt-2 text-3xl font-bold text-slate-900">가벼운 일거리</h1>
           <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-600">
-            동네에서 부담 없이 연결할 수 있는 장소를 모았습니다.{" "}
-            <strong className="font-semibold text-slate-800">
-              경기도 Open API「시군별 장애인활동 지원 기관 현황」
-            </strong>
-            실데이터를 백엔드에서 불러오며, 내 위치를 알려 주시면 좌표가 있는 기관부터 가까운 순으로 정렬합니다.
+            동네에서 부담 없이 연결할 수 있는 장소를 모았습니다. 경기도에서 공개하는{" "}
+            <strong className="font-semibold text-slate-800">시·군별 장애인활동 지원 기관</strong> 정보를 불러오며,
+            내 위치를 알려 주시면 위치 정보가 있는 기관부터 가까운 순으로 정렬합니다.
           </p>
 
           {usedLiveApi ? (
             <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-950">
-              <strong className="font-semibold">실데이터 모드:</strong> 아래 {rows.length}곳은 경기도 공공 API
-              연동 결과입니다. 체험·봉사 일정은 각 기관에 문의해야 합니다.
+              <strong className="font-semibold">안내:</strong> 아래 {rows.length}곳은 최신 공개 목록을 기준으로
+              보여 줍니다. 체험·봉사 일정은 각 기관에 문의해야 합니다.
             </div>
           ) : (
             <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
-              <strong className="font-semibold">샘플 모드:</strong> 백엔드에{" "}
-              <code className="rounded bg-amber-100/80 px-1 py-0.5 text-xs">GG_API_KEY</code>가 없거나 API 호출에
-              실패한 경우, 기존 시연용 시드 카드만 표시합니다.
+              <strong className="font-semibold">샘플 모드:</strong> 지금은 예시 카드만 표시됩니다. 기관 목록을
+              보려면 서버가 켜져 있고 경기도 기관 정보 연동 설정이 되어 있어야 합니다.
             </div>
           )}
 
@@ -44,7 +41,8 @@ export default async function LightGigsPage({ searchParams }: PageProps) {
 
           {userGeo ? (
             <p className="mt-3 text-xs text-slate-500">
-              기준 좌표: {userGeo.lat.toFixed(5)}, {userGeo.lng.toFixed(5)} (URL에 포함되어 공유 가능)
+              기준 위치: {userGeo.lat.toFixed(5)}, {userGeo.lng.toFixed(5)} · 이 화면 링크를 저장하면 같은 기준으로
+              다시 열 수 있습니다.
             </p>
           ) : null}
         </section>
@@ -64,11 +62,6 @@ export default async function LightGigsPage({ searchParams }: PageProps) {
                 <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                   {row.metaRight}
                 </span>
-                {row.kind === "institution" ? (
-                  <span className="mt-1 inline-flex w-fit rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-                    경기도 API
-                  </span>
-                ) : null}
                 <h2 className="mt-2 text-lg font-bold text-slate-900">{row.title}</h2>
                 <p className="mt-1 text-sm font-medium text-slate-700">{row.workplaceLabel}</p>
                 <p className="mt-0.5 text-xs text-slate-500">{row.sigungu}</p>

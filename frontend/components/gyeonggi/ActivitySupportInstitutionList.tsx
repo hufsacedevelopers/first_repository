@@ -28,7 +28,7 @@ export default function ActivitySupportInstitutionList({
   if (institutions.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-10 text-center text-sm text-slate-600">
-        표시할 기관이 없습니다. 백엔드에 경기도 Open API 키가 설정되어 있는지, 다른 시·군을 선택해 보세요.
+        표시할 기관이 없습니다. 연결 상태를 확인하거나 다른 시·군을 선택해 보세요.
       </div>
     );
   }

@@ -35,7 +35,7 @@ export default function GyeonggiSigunFilter({ regions, selectedSigunNm }: Gyeong
           시·군 선택
         </label>
         <p className="mt-1 text-xs text-slate-500">
-          경기도 Open API 시군명 기준입니다. 선택 시 URL에 반영되어 공유할 수 있습니다.
+          경기도에서 쓰는 시·군 이름 기준입니다. 선택하면 주소창 링크에 반영되어 공유할 수 있습니다.
         </p>
       </div>
       <select

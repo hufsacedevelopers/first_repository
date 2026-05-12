@@ -14,7 +14,7 @@ const notoSansKr = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: "Choicework — 장애인·청년 맞춤 일자리 비교",
   description:
-    "실시간 구인 공공 API와 근무환경 지표로, 내 장애 유형에 맞는 채용을 빠르게 비교합니다.",
+    "실시간 구인 공고와 근무환경 지표로, 내 장애 유형에 맞는 채용을 빠르게 비교합니다.",
 };
 
 export default function RootLayout({

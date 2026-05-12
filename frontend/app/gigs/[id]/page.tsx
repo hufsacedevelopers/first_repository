@@ -73,7 +73,7 @@ export default async function LightGigDetailPage({ params, searchParams }: Props
             <section className="mt-8 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5">
               <h2 className="text-sm font-bold text-emerald-950">추출된 역량 키워드</h2>
               <p className="mt-1 text-xs text-emerald-800">
-                후기 문장을 분석해 자동으로 뽑은 태그입니다. (MVP: 규칙 기반 · 추후 LLM 보조 가능)
+                후기 문장을 분석해 자동으로 뽑은 태그입니다.
               </p>
               <ul className="mt-4 flex flex-wrap gap-2">
                 {competencies.map((tag) => (
@@ -88,7 +88,7 @@ export default async function LightGigDetailPage({ params, searchParams }: Props
             </section>
 
             <section className="mt-8 rounded-2xl border border-slate-200 bg-slate-50/50 p-5">
-              <h2 className="text-sm font-bold text-slate-900">데이터 매핑 (기획·심사용)</h2>
+              <h2 className="text-sm font-bold text-slate-900">참고</h2>
               <p className="mt-2 text-sm text-slate-700">{gig.standardWorkplaceCategory}</p>
             </section>
 
@@ -137,7 +137,7 @@ export default async function LightGigDetailPage({ params, searchParams }: Props
 
         <article className="mt-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <span className="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-900">
-            경기도 Open API · 장애인활동지원 기관
+            장애인활동지원 기관
           </span>
           <h1 className="mt-4 text-2xl font-bold text-slate-900 md:text-3xl">{inst.instNm}</h1>
           <p className="mt-2 text-sm text-slate-600">{inst.sigunNm} · 우편번호 {inst.refineZipCd || "—"}</p>
@@ -155,10 +155,12 @@ export default async function LightGigDetailPage({ params, searchParams }: Props
             <p className="mt-2 text-sm leading-relaxed text-slate-800">{addr}</p>
             {coord ? (
               <p className="mt-2 text-xs text-slate-500">
-                WGS84: {coord.lat.toFixed(6)}, {coord.lng.toFixed(6)}
+                위도·경도: {coord.lat.toFixed(6)}, {coord.lng.toFixed(6)}
               </p>
             ) : (
-              <p className="mt-2 text-xs text-amber-800">이 기관은 공공데이터에 위도·경도가 비어 있어 거리 정렬에서 뒤로 밀릴 수 있습니다.</p>
+              <p className="mt-2 text-xs text-amber-800">
+                이 기관은 공개 정보에 위치 좌표가 없어 거리 정렬에서 뒤로 밀릴 수 있습니다.
+              </p>
             )}
           </section>
 
@@ -185,7 +187,7 @@ export default async function LightGigDetailPage({ params, searchParams }: Props
           </section>
 
           <section className="mt-8">
-            <h2 className="text-sm font-bold text-slate-900">급여·서비스 구분 (공공데이터 필드)</h2>
+            <h2 className="text-sm font-bold text-slate-900">급여·서비스 구분</h2>
             <dl className="mt-3 space-y-2 text-sm text-slate-700">
               <div>
                 <dt className="text-xs font-semibold text-slate-500">활동지원 급여 구분</dt>
@@ -203,10 +205,8 @@ export default async function LightGigDetailPage({ params, searchParams }: Props
           </section>
 
           <section className="mt-8 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5">
-            <h2 className="text-sm font-bold text-emerald-950">역량 키워드 (서비스 필드 기반)</h2>
-            <p className="mt-1 text-xs text-emerald-800">
-              공공데이터의 급여·서비스 구분 텍스트를 규칙 기반으로 태깅한 예시입니다.
-            </p>
+            <h2 className="text-sm font-bold text-emerald-950">역량 키워드</h2>
+            <p className="mt-1 text-xs text-emerald-800">등록된 서비스·급여 구분 문구를 바탕으로 만든 참고 태그입니다.</p>
             {serviceBlob ? (
               <p className="mt-2 text-xs text-emerald-900/80">&ldquo;{serviceBlob}&rdquo;</p>
             ) : null}

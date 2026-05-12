@@ -42,24 +42,22 @@ export default async function JobInsightsPage() {
           </div>
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-              <p className="text-xs text-slate-500">job_list</p>
+              <p className="text-xs text-slate-500">전체 구인 공고</p>
               <p className="mt-1 text-lg font-bold text-slate-900">{comparison.jobListTotal.toLocaleString()}건</p>
-              <p className="text-xs text-slate-500">resultCode: {comparison.jobListResultCode}</p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-              <p className="text-xs text-slate-500">job_list_env</p>
+              <p className="text-xs text-slate-500">근무환경 포함 공고</p>
               <p className="mt-1 text-lg font-bold text-slate-900">{comparison.jobListEnvTotal.toLocaleString()}건</p>
-              <p className="text-xs text-slate-500">resultCode: {comparison.jobListEnvResultCode}</p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-              <p className="text-xs text-slate-500">차이(job_list-env)</p>
+              <p className="text-xs text-slate-500">상기 두 목록 차이</p>
               <p className="mt-1 text-lg font-bold text-slate-900">
                 {(comparison.jobListTotal - comparison.jobListEnvTotal).toLocaleString()}건
               </p>
-              <p className="text-xs text-slate-500">환경필드 포함 여부에 따른 차이</p>
+              <p className="text-xs text-slate-500">근무환경 항목 포함 여부에 따른 차이</p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-              <p className="text-xs text-slate-500">환경필드 누락률</p>
+              <p className="text-xs text-slate-500">근무환경 정보 누락 비율</p>
               <p className="mt-1 text-lg font-bold text-slate-900">{missingEnvRate}%</p>
               <p className="text-xs text-slate-500">
                 누락 {missingEnvCount.toLocaleString()}건 / 전체 {comparison.jobListTotal.toLocaleString()}건
@@ -69,10 +67,8 @@ export default async function JobInsightsPage() {
         </section>
 
         <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-900">백엔드 수집/병합 메타</h2>
-          <p className="mt-1 text-sm text-slate-500">
-            `/jobs/live-merged` 기준 운영 모니터링 지표입니다.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">데이터 수집 요약</h2>
+          <p className="mt-1 text-sm text-slate-500">여러 출처에서 가져온 공고를 합칠 때의 요약 지표입니다.</p>
           {mergedMeta ? (
             <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
@@ -84,7 +80,7 @@ export default async function JobInsightsPage() {
                 <p className="mt-1 text-lg font-bold text-slate-900">{mergedMeta.mergeMatchRate}%</p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <p className="text-xs text-slate-500">원천 수집 건수(raw/env)</p>
+                <p className="text-xs text-slate-500">일반·환경 포함 수집 건수</p>
                 <p className="mt-1 text-lg font-bold text-slate-900">
                   {mergedMeta.rawCollectedCount}/{mergedMeta.envCollectedCount}
                 </p>
@@ -95,7 +91,7 @@ export default async function JobInsightsPage() {
               </div>
             </div>
           ) : (
-            <p className="mt-4 text-sm text-slate-600">백엔드 메타를 가져오지 못해 표시하지 않습니다.</p>
+            <p className="mt-4 text-sm text-slate-600">요약 정보를 불러오지 못해 표시하지 않습니다.</p>
           )}
         </section>
 

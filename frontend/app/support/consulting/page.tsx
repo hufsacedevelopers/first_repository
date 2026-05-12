@@ -247,7 +247,7 @@ export default async function SupportConsultingPage({ searchParams }: SupportCon
               </table>
             </div>
             <p className="mt-3 text-xs text-slate-500">
-              공공데이터 API 응답 형식(지역/업종 표기 키)이 연도별로 달라 정규화해 표시합니다.
+              지역·업종 표기 방식이 연도별로 달라, 화면에 맞게 정리해 표시합니다.
             </p>
           </article>
         </section>
@@ -279,8 +279,7 @@ export default async function SupportConsultingPage({ searchParams }: SupportCon
             <div>
               <h2 className="text-lg font-bold text-slate-900">장애인 표준사업장 실시간 조회</h2>
               <p className="mt-1 text-sm text-slate-500">
-                API 응답코드 {standardWorkplaceResponse.resultCode} · {standardWorkplaceResponse.resultMsg} · 전체{" "}
-                {standardWorkplaceResponse.totalCount.toLocaleString()}건
+                조회 결과 전체 {standardWorkplaceResponse.totalCount.toLocaleString()}건입니다.
               </p>
             </div>
             <form action="/support/consulting" method="get" className="flex gap-2">

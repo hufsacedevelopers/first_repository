@@ -58,11 +58,11 @@ export default function GigsGeoBar() {
           {hasCoords ? (
             <>
               <span className="font-semibold text-slate-900">내 위치 기준</span>으로 가까운 순으로 정렬했습니다.
-              주소에 WGS84 좌표가 없는 기관은 목록 뒤쪽에 모입니다.
+              주소에 위치 좌표가 없는 기관은 목록 뒤쪽에 모입니다.
             </>
           ) : (
             <>
-              <span className="font-semibold text-slate-900">내 위치 허용</span> 시 경기도 기관 좌표가 있는 곳부터
+              <span className="font-semibold text-slate-900">내 위치 허용</span> 시 위치 정보가 있는 기관부터
               거리순으로 보여 드립니다.
             </>
           )}

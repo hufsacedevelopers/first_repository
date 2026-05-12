@@ -33,23 +33,21 @@ export default async function GyeonggiActivitySupportPage({ searchParams }: Page
         </nav>
 
         <header className="space-y-3">
-          <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
-            경기도 공공데이터
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">지역 안내</p>
           <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">
             시·군별 장애인활동 지원 기관 현황
           </h1>
           <p className="max-w-3xl text-sm leading-relaxed text-slate-600">
-            데이터는 경기도 Open API{" "}
+            아래 목록은 경기도에서 공개하는 시·군별 장애인활동 지원 기관 정보를 바탕으로 합니다. 기관명·주소·연락처·
+            급여 구분(활동보조·방문목욕·방문간호) 등을 확인할 수 있습니다.{" "}
             <a
               href="https://openapi.gg.go.kr/Ggsigundspsnactsport"
               className="font-medium text-primary-800 underline-offset-2 hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Ggsigundspsnactsport
+              원문 자료 보기 ↗
             </a>
-            를 통해 제공됩니다. 기관명·주소·연락처·급여 구분(활동보조·방문목욕·방문간호) 등을 확인할 수 있습니다.
           </p>
           <p className="text-xs text-slate-500">
             집계: 전체 {totalInstitutions}개 기관 · 시군 최다 기관 수 {maxCount}곳 (접근성 점수 산정 시 기준과 동일 출처)

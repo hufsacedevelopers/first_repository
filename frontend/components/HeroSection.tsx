@@ -20,7 +20,7 @@ export default function HeroSection() {
         경기도 장애인 구직자를 위한 공공데이터 기반 일자리·기업 환경 추천 MVP
       </p>
       <p className="relative mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
-        한국장애인고용공단 실시간 구인 API와 근무환경 항목으로 공고와 기업 정보를 빠르게 비교합니다.
+        한국장애인고용공단 실시간 구인 정보와 근무환경 항목으로 공고와 기업 정보를 빠르게 비교합니다.
       </p>
 
       <div className="relative mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">

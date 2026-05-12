@@ -73,8 +73,7 @@ export default async function EnvironmentPage({ searchParams }: EnvironmentPageP
             ))}
           </div>
           <p className="mt-3 text-xs text-slate-500">
-            API 원문 환경필드(`envStndWalk`, `envLstnTalk`, `envEyesight`, `envLiftPower`)가 있는 공고만
-            분석 대상으로 사용합니다.
+            서기·시력·청력·중량물 등 근무환경 항목이 채워진 공고만 분석 대상으로 사용합니다.
           </p>
         </section>
 
@@ -103,10 +102,10 @@ export default async function EnvironmentPage({ searchParams }: EnvironmentPageP
         <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-base font-bold text-slate-900">조건 해석 가이드</h2>
           <ul className="mt-3 space-y-2 text-sm text-slate-600">
-            <li>장시간 서기 부담 낮음: `envStndWalk`가 장시간 가능으로 명시되지 않은 공고 우선</li>
-            <li>청취/대화 부담 낮음: `envLstnTalk` 부담이 낮은 항목 우선</li>
-            <li>시력 요구 부담 낮음: `envEyesight` 고시력 요구가 낮은 항목 우선</li>
-            <li>중량물 부담 낮음: `envLiftPower`에서 고중량(20kg) 요구가 낮은 항목 우선</li>
+            <li>장시간 서기 부담 낮음: 장시간 서서 일하는 것이 어렵지 않다고 적힌 공고는 제외하고 보여 줍니다.</li>
+            <li>청취/대화 부담 낮음: 듣고 말하기에 큰 어려움이 없다고만 적힌 공고는 제외하고 보여 줍니다.</li>
+            <li>시력 요구 부담 낮음: 아주 작은 글씨까지 읽어야 한다고 적힌 공고는 제외하고 보여 줍니다.</li>
+            <li>중량물 부담 낮음: 20kg 이상 들기가 필요하다고 적힌 공고는 제외하고 보여 줍니다.</li>
           </ul>
         </section>
       </main>
