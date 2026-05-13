@@ -40,15 +40,15 @@ export default function SiteFooter() {
           </div>
         </div>
 
-        {/* 하단 프로젝트 및 사업자 정보 영역 */}
+        {/* 법적 링크 */}
         <div className="mt-12 border-t border-slate-100 pt-8 text-xs text-slate-500">
-          <p className="mb-2 font-bold text-slate-700">ChoiceWork 프로젝트</p>
-          <p className="mb-1">공공데이터포털·한국장애인고용공단 정보 연계 · 장애인 취업 의사결정 MVP</p>
-          <p className="mb-4">개발: HUFS ACE Developers</p>
-          
           <div className="flex flex-wrap gap-4 font-semibold text-slate-600">
-            <span className="cursor-pointer hover:text-slate-900">이용약관</span>
-            <span className="cursor-pointer hover:text-slate-900 text-slate-900">개인정보처리방침</span>
+            <Link href="/terms" className="hover:text-slate-900">
+              이용약관
+            </Link>
+            <Link href="/privacy" className="hover:text-slate-900 text-slate-900">
+              개인정보처리방침
+            </Link>
             <span className="cursor-pointer hover:text-slate-900">운영정책</span>
           </div>
         </div>
