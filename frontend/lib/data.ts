@@ -1,9 +1,24 @@
-import { AccessibilitySummary, ActivitySupportInstitution, Company, Job } from "@/types";
+import {
+  AccessibilitySummary,
+  ActivitySupportInstitution,
+  Company,
+  CompanyRatingMethodology,
+  Job,
+} from "@/types";
 import { api, type LiveJobsMergedMeta } from "./api";
 import { companies as mockCompanies, jobs as mockJobs } from "./mockData";
+import { DEMO_RATING_METHODOLOGY } from "./methodologyDemo";
 import { getKeadJobComparison, getMergedKeadJobs } from "./kead-jobs";
 
 const USE_MOCK = !(process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL);
+
+/** 로컬 `npm run dev`에서 기업 친화도 UI는 더미로 고정(채용 공고 등 다른 API는 그대로). 실제 백엔드 연동 테스트 시 `.env`에 `NEXT_PUBLIC_USE_LIVE_COMPANY_API=true` */
+export function isDevCompanyDemoMode(): boolean {
+  return (
+    process.env.NODE_ENV === "development" &&
+    process.env.NEXT_PUBLIC_USE_LIVE_COMPANY_API !== "true"
+  );
+}
 const ALLOW_MOCK_FALLBACK =
   process.env.NEXT_PUBLIC_ALLOW_MOCK_FALLBACK === "true" || process.env.NODE_ENV !== "production";
 const API_RETRY_COOLDOWN_MS = 30_000;
@@ -38,6 +53,19 @@ const emptyAccessibilitySummary: AccessibilitySummary = {
   maxCount: 0,
   totalInstitutions: 0,
 };
+
+export async function getRatingMethodology(): Promise<CompanyRatingMethodology | null> {
+  if (isDevCompanyDemoMode()) {
+    return DEMO_RATING_METHODOLOGY;
+  }
+  if (!shouldUseApi()) return null;
+  try {
+    return await api.ratingMethodology();
+  } catch (error) {
+    disableApiTemporarily(error);
+    return null;
+  }
+}
 
 export async function getAccessibilitySummary(): Promise<AccessibilitySummary> {
   if (!shouldUseApi()) {
@@ -75,6 +103,13 @@ export async function getCompaniesWithMeta(): Promise<{
   syncedAt: string | null;
   companies: Company[];
 }> {
+  if (isDevCompanyDemoMode()) {
+    return {
+      source: "static",
+      syncedAt: null,
+      companies: mockCompanies,
+    };
+  }
   if (!shouldUseApi()) {
     return {
       source: "static",

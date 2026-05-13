@@ -2,6 +2,7 @@ import { Company } from "@/types";
 import Link from "next/link";
 
 import BookmarkButton from "./BookmarkButton";
+import RatingBreakdownPanel from "./RatingBreakdownPanel";
 import ScoreTooltip from "./ScoreTooltip";
 
 interface CompanyScoreCardProps {
@@ -89,6 +90,10 @@ export default function CompanyScoreCard({ company }: CompanyScoreCardProps) {
           </dd>
         </div>
       </dl>
+
+      {company.ratingBreakdown && (
+        <RatingBreakdownPanel breakdown={company.ratingBreakdown} compact />
+      )}
 
       {sub && (
         <div className="mt-5">

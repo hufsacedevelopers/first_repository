@@ -1,3 +1,4 @@
+import RatingBreakdownPanel from "@/components/RatingBreakdownPanel";
 import ScoreTooltip from "@/components/ScoreTooltip";
 import BookmarkButton from "@/components/BookmarkButton";
 import { getCompanyById } from "@/lib/data";
@@ -91,6 +92,19 @@ export default async function CompanyDetailPage({ params }: Props) {
             <BookmarkButton storageKey={`company-${company.id}`} label="관심 기업 등록" />
           </div>
         </div>
+
+        {company.ratingBreakdown && (
+          <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary-700">
+              Rating breakdown
+            </p>
+            <h2 className="mt-2 text-xl font-bold text-slate-900">친화도 산출 세부</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              아래는 기업 친화도(0–100)를 만든 각 부분 점수입니다. 최종 점수는 표시된 가중치로 가중 합산됩니다.
+            </p>
+            <RatingBreakdownPanel breakdown={company.ratingBreakdown} />
+          </section>
+        )}
 
         {/* 세부 지표 */}
         {sub && (

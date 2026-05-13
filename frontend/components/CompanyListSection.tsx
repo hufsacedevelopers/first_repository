@@ -1,6 +1,7 @@
 import CompanyScoreCard from "@/components/CompanyScoreCard";
 import MethodologyBlock from "@/components/MethodologyBlock";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { Company } from "@/types";
 
 interface CompanyListSectionProps {
@@ -9,6 +10,12 @@ interface CompanyListSectionProps {
   syncedAt?: string | null;
   variant?: "full" | "preview";
   previewLimit?: number;
+  /** 칩 라벨 오버라이드 (예: 데모 데이터, 검색 결과) */
+  badgeLabel?: string;
+  /** true면 우측 데이터 출처 칩을 렌더하지 않음 */
+  hideSourceBadge?: boolean;
+  /** 카드가 없을 때 본문 영역에 표시 */
+  emptyState?: ReactNode;
 }
 
 export default function CompanyListSection({
@@ -17,6 +24,9 @@ export default function CompanyListSection({
   syncedAt = null,
   variant = "full",
   previewLimit = 2,
+  badgeLabel,
+  hideSourceBadge = false,
+  emptyState,
 }: CompanyListSectionProps) {
   const list = variant === "preview" ? companies.slice(0, previewLimit) : companies;
   const firstId = companies[0]?.id;
@@ -62,9 +72,11 @@ export default function CompanyListSection({
             0–100점으로 평가합니다.
           </p>
         </div>
-        <span className="inline-flex shrink-0 items-center rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-900">
-          {source === "live" ? "실시간 데이터" : "정적 데이터"}
-        </span>
+        {!hideSourceBadge ? (
+          <span className="inline-flex shrink-0 items-center rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-900">
+            {badgeLabel ?? (source === "live" ? "실시간 데이터" : "정적 데이터")}
+          </span>
+        ) : null}
       </div>
       {source === "live" && syncedAt ? (
         <p className="text-xs text-slate-500">
@@ -72,11 +84,15 @@ export default function CompanyListSection({
         </p>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {list.map((company) => (
-          <CompanyScoreCard key={company.companyName} company={company} />
-        ))}
-      </div>
+      {list.length === 0 && emptyState ? (
+        <div className="w-full">{emptyState}</div>
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-3">
+          {list.map((company) => (
+            <CompanyScoreCard key={company.companyName} company={company} />
+          ))}
+        </div>
+      )}
 
       <MethodologyBlock />
     </section>

@@ -1,4 +1,10 @@
-import { AccessibilitySummary, ActivitySupportInstitution, Company, Job } from "@/types";
+import {
+  AccessibilitySummary,
+  ActivitySupportInstitution,
+  Company,
+  CompanyRatingMethodology,
+  Job,
+} from "@/types";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ??
@@ -161,6 +167,7 @@ export const api = {
           data: Company[];
         }
     >("/companies"),
+  ratingMethodology: () => get<CompanyRatingMethodology>("/companies/rating-methodology"),
   jobs: () => get<Job[]>("/jobs"),
   liveJobsWithEnv: async (pageNo = 1, numOfRows = 20): Promise<Job[]> => {
     const res = await get<LiveJobsResponse>(

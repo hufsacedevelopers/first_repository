@@ -26,6 +26,16 @@ def test_companies_returns_payload():
     assert "friendlinessScore" in data[0]
 
 
+def test_rating_methodology():
+    res = client.get("/companies/rating-methodology")
+    assert res.status_code == 200
+    body = res.json()
+    assert body.get("version")
+    assert isinstance(body.get("weights"), list)
+    assert len(body["weights"]) >= 6
+    assert "workEnvDimensionsKo" in body
+
+
 def test_jobs_returns_list():
     res = client.get("/jobs")
     assert res.status_code == 200

@@ -20,9 +20,29 @@ export interface Company {
   monthlySupportLabel?: string;
   annualSupportLabel?: string;
   subScores?: CompanySubScores;
+  /** 기업 친화도 산출 시 각 축의 부분 점수(0~100, API live 소스에서 제공) */
+  ratingBreakdown?: Record<string, number>;
   // 생활 접근성 (경기도 장애인활동지원기관 데이터 기반)
   accessibilityScore?: number; // 0~1 정규화 점수
   compositeScore?: number;     // 종합 점수 0~100
+}
+
+/** GET /companies/rating-methodology */
+export interface MethodologyWeight {
+  key: string;
+  label: string;
+  value: number;
+}
+
+export interface CompanyRatingMethodology {
+  version: string;
+  effectiveDate: string;
+  title: string;
+  summary: string;
+  workEnvDimensionsKo: string[];
+  weights: MethodologyWeight[];
+  compositeFormula: string;
+  updatePolicy: string;
 }
 
 /** GET /accessibility */

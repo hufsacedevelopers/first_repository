@@ -5,6 +5,10 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.services.accessibility_service import get_access_scores, match_access_score
+from app.services.company_rating_service import (
+    average_work_env_for_company,
+    compute_friendliness_and_breakdown,
+)
 from app.services.data_service import get_companies_data
 from app.services.live_job_service import fetch_live_jobs_merged
 from app.services.standard_workplace_service import fetch_standard_workplaces
@@ -102,16 +106,30 @@ def _build_companies_payload_uncached(limit: int = 24) -> dict[str, Any]:
             job_count = job_count_by_company.get(name, 0)
             type_count = len(employment_types_by_company.get(name, set()))
             access_score = match_access_score(location, access_scores) if access_scores else 0.0
-            friendliness = _clamp(68 + min(20, job_count * 2) + min(9, type_count * 3), 55, 98)
+
+            disabled_rate = round(min(10.0, 2.0 + (job_count * 0.45)), 1)
+            retention_r = _clamp(72 + job_count, 60, 95)
+            diversity = _clamp(55 + type_count * 10, 35, 100)
+            work_env_avg = average_work_env_for_company(live_jobs, name)
+
+            friendliness, breakdown = compute_friendliness_and_breakdown(
+                disabled_employment_rate=disabled_rate,
+                retention_rate=float(retention_r),
+                job_diversity=diversity,
+                standard_workplace_certified=True,
+                work_env_avg=work_env_avg,
+                job_count=job_count,
+                type_count=type_count,
+            )
 
             companies.append(
                 {
                     "companyName": name,
                     "location": location,
                     "industry": str(item.get("companyTypeName", "") or item.get("product", "")).strip() or None,
-                    "disabledEmploymentRate": round(min(10.0, 2.0 + (job_count * 0.45)), 1),
-                    "retentionRate": _clamp(72 + job_count, 60, 95),
-                    "jobDiversity": _clamp(55 + type_count * 10, 35, 100),
+                    "disabledEmploymentRate": disabled_rate,
+                    "retentionRate": retention_r,
+                    "jobDiversity": diversity,
                     "friendlinessScore": friendliness,
                     "disabledEmployedCount": job_count if job_count > 0 else None,
                     "accessibilityGrade": _grade_from_access(access_score),
@@ -122,11 +140,22 @@ def _build_companies_payload_uncached(limit: int = 24) -> dict[str, Any]:
                     "compositeScore": _clamp(
                         round((friendliness / 100 * 0.7 + access_score * 0.3) * 100), 0, 100
                     ),
+                    "ratingBreakdown": breakdown,
                     "subScores": {
-                        "accessibility": _clamp(round(access_score * 100), 0, 100),
-                        "employment": _clamp(55 + min(job_count, 10) * 4, 0, 100),
-                        "welfare": _clamp(50 + min(type_count, 4) * 10, 0, 100),
-                        "culture": _clamp(52 + min(job_count, 8) * 4, 0, 100),
+                        "accessibility": _clamp(
+                            int(round(breakdown["workEnvironmentSixAvg"])), 0, 100
+                        ),
+                        "employment": _clamp(int(round(breakdown["employment"])), 0, 100),
+                        "welfare": _clamp(int(round(breakdown["welfare"])), 0, 100),
+                        "culture": _clamp(
+                            int(
+                                round(
+                                    (breakdown["retention"] + breakdown["jobDiversity"]) / 2
+                                )
+                            ),
+                            0,
+                            100,
+                        ),
                     },
                 }
             )
