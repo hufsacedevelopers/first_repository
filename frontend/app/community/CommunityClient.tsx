@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { MessageSquare, ThumbsUp, TrendingUp, User, Search, ArrowLeft, PenLine, Check } from "lucide-react";
 
 interface CommentData {
@@ -9,6 +9,12 @@ interface CommentData {
   author: string;
   text: string;
   time: string;
+  /** 현재 기기에서 작성한 댓글(익명 포함) — 삭제 가능 */
+  isOwn?: boolean;
+}
+
+function isOwnComment(c: CommentData): boolean {
+  return c.isOwn === true || c.author === "나";
 }
 
 interface PostData {
@@ -41,7 +47,6 @@ interface CommunityClientProps {
 }
 
 export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
-  const router = useRouter();
   const [posts, setPosts] = useState<PostData[]>(initialPosts);
   const [activeBoard, setActiveBoard] = useState<string>("전체보기");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -50,6 +55,7 @@ export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
   const [isAnonymous, setIsAnonymous] = useState<boolean>(true);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [showWriteModal, setShowWriteModal] = useState<boolean>(false);
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 
   const [newPostTitle, setNewPostTitle] = useState<string>("");
   const [newPostContent, setNewPostContent] = useState<string>("");
@@ -69,6 +75,15 @@ export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
     if (isLoaded) localStorage.setItem("choiceWorkCommunityData_v3", JSON.stringify(posts));
   }, [posts, isLoaded]);
 
+  useEffect(() => {
+    if (!showLoginModal) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowLoginModal(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [showLoginModal]);
+
   const sortedPosts = [...posts].sort((a, b) => b.id - a.id);
 
   const filteredPosts = sortedPosts.filter(post => {
@@ -81,13 +96,17 @@ export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
 
   const handleWriteClick = () => {
     if (!isLoggedIn) {
-      router.push("/auth/login?next=/community");
+      setShowLoginModal(true);
       return;
     }
     setShowWriteModal(true);
   };
 
   const handleLike = (postId: number) => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
     setPosts(posts.map(post => {
       if (post.id === postId && !post.likedByMe) {
         return { ...post, likes: post.likes + 1, likedByMe: true };
@@ -115,7 +134,29 @@ export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
     setShowWriteModal(false);
   };
 
+  const handleDeleteComment = (postId: number, comment: CommentData) => {
+    if (!isOwnComment(comment)) return;
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
+    if (!window.confirm("이 댓글을 삭제할까요?")) return;
+    setPosts(
+      posts.map((post) => {
+        if (post.id !== postId) return post;
+        return {
+          ...post,
+          comments: post.comments.filter((x) => x.id !== comment.id),
+        };
+      })
+    );
+  };
+
   const handleAddComment = () => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
     if (!newComment.trim() || !selectedPostId) return;
     setPosts(posts.map(post => {
       if (post.id === selectedPostId) {
@@ -123,7 +164,8 @@ export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
           id: Date.now(),
           author: isAnonymous ? "익명" : "나",
           text: newComment,
-          time: "방금 전"
+          time: "방금 전",
+          isOwn: true,
         };
         return {
           ...post,
@@ -184,9 +226,10 @@ export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
               <p className="text-slate-700 leading-relaxed mb-8 whitespace-pre-wrap">{selectedPost.content}</p>
               <div className="flex gap-4 mb-8">
                 <button
+                  type="button"
                   onClick={() => handleLike(selectedPost.id)}
                   disabled={selectedPost.likedByMe}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition ${selectedPost.likedByMe ? "bg-rose-500 text-white" : "bg-rose-50 text-rose-600 hover:bg-rose-100"}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition disabled:opacity-50 ${selectedPost.likedByMe ? "bg-rose-500 text-white" : "bg-rose-50 text-rose-600 hover:bg-rose-100"}`}
                 >
                   <ThumbsUp size={16} /> {selectedPost.likedByMe ? "공감 완료" : "공감"} {selectedPost.likes}
                 </button>
@@ -195,15 +238,43 @@ export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
               <div className="border-t pt-8">
                 <h3 className="font-bold text-slate-900 mb-4">댓글 {selectedPost.comments.length}</h3>
                 <div className="space-y-4 mb-6">
-                  {selectedPost.comments.map(c => (
-                    <div key={c.id} className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className={`text-xs font-bold ${c.author === '나' ? 'text-emerald-600' : 'text-slate-700'}`}>{c.author}</span>
-                        <span className="text-[10px] text-slate-400">{c.time}</span>
+                  {selectedPost.comments.map((c) => {
+                    const own = isOwnComment(c);
+                    return (
+                      <div
+                        key={c.id}
+                        role={own ? "button" : undefined}
+                        tabIndex={own ? 0 : undefined}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (own) handleDeleteComment(selectedPost.id, c);
+                        }}
+                        onKeyDown={(e) => {
+                          if (!own) return;
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleDeleteComment(selectedPost.id, c);
+                          }
+                        }}
+                        title={own ? "클릭하여 삭제" : undefined}
+                        className={`rounded-xl border p-4 transition ${
+                          own
+                            ? "cursor-pointer border-emerald-200/80 bg-emerald-50/40 hover:border-rose-200 hover:bg-rose-50/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                            : "border-slate-100 bg-slate-50"
+                        }`}
+                      >
+                        <div className="flex justify-between items-center mb-1">
+                          <span
+                            className={`text-xs font-bold ${c.author === "나" ? "text-emerald-600" : "text-slate-700"}`}
+                          >
+                            {c.author}
+                          </span>
+                          <span className="text-[10px] text-slate-400">{c.time}</span>
+                        </div>
+                        <p className="text-sm text-slate-700">{c.text}</p>
                       </div>
-                      <p className="text-sm text-slate-700">{c.text}</p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 px-1">
@@ -220,11 +291,17 @@ export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
                     <input
                       type="text" value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
+                      onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
                       placeholder="따뜻한 댓글을 남겨주세요."
                       className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none shadow-sm"
                     />
-                    <button onClick={handleAddComment} className="bg-emerald-500 text-white px-5 py-2 rounded-xl font-bold hover:bg-emerald-600 transition">등록</button>
+                    <button
+                      type="button"
+                      onClick={handleAddComment}
+                      className="bg-emerald-500 text-white px-5 py-2 rounded-xl font-bold hover:bg-emerald-600 transition"
+                    >
+                      등록
+                    </button>
                   </div>
                 </div>
               </div>
@@ -285,6 +362,34 @@ export default function CommunityClient({ isLoggedIn }: CommunityClientProps) {
           </div>
         </aside>
       </div>
+
+      {/* 로그인 안내 */}
+      {showLoginModal && (
+        <div
+          className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          role="presentation"
+          onClick={() => setShowLoginModal(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="login-modal-title"
+            className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="login-modal-title" className="text-center text-base font-bold leading-snug text-slate-900">
+              좋아요 및 기능은 로그인 후에 이용할 수 있습니다
+            </h2>
+            <Link
+              href="/auth/login?next=/community"
+              className="mt-6 flex w-full items-center justify-center rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+              onClick={() => setShowLoginModal(false)}
+            >
+              로그인하러가기
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* 새 글 쓰기 모달 */}
       {showWriteModal && (
