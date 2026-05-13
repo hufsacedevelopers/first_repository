@@ -56,7 +56,8 @@ export default function NotFound() {
           <span className="mr-1" aria-hidden>
             💡
           </span>
-          자주 쓰는 메뉴는 상단 <span className="font-semibold text-slate-500">가벼운 일거리</span> ·{" "}
+          자주 쓰는 메뉴는 <span className="font-semibold text-slate-500">일자리 맞춤 추천</span> ·{" "}
+          <span className="font-semibold text-slate-500">관심 공고</span> ·{" "}
           <span className="font-semibold text-slate-500">서비스 소개</span>에서도 이동할 수 있어요.
         </p>
       </div>

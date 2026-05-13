@@ -35,17 +35,13 @@ export default async function SiteHeader() {
             />
           </Link>
           <Link
-            href="/gigs"
+            href="/recommendations"
             className="shrink-0 text-sm font-semibold text-primary-700 transition hover:text-primary-900 md:hidden"
           >
-            가벼운 일거리
+            일자리
           </Link>
-
           {/* 🔗 네비게이션 메뉴 추가 */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/gigs" className="text-sm font-semibold text-primary-700 hover:text-primary-900 transition">
-              가벼운 일거리
-            </Link>
             <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition">
               서비스 소개
             </Link>
@@ -62,6 +58,13 @@ export default async function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-3">
+          <Link
+            href="/saved-jobs"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-300 hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            aria-label="관심 공고"
+          >
+            ♥
+          </Link>
           <Link
             href="/recommendations"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"

@@ -17,9 +17,11 @@ const ENV_LABELS: Record<string, string> = {
   envStndWalk: "서기/걷기",
 };
 
-function formatDate(raw: string): string {
-  if (!raw || raw.length < 8) return raw;
-  return `${raw.slice(0, 4)}.${raw.slice(4, 6)}.${raw.slice(6, 8)}`;
+function formatDate(raw: string | number | undefined): string {
+  if (raw == null || raw === "") return "";
+  const digits = String(raw).replace(/\D/g, "");
+  if (digits.length < 8) return String(raw);
+  return `${digits.slice(0, 4)}.${digits.slice(4, 6)}.${digits.slice(6, 8)}`;
 }
 
 export default async function JobDetailPage({ params }: Props) {

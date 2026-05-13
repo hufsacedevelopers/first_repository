@@ -20,7 +20,7 @@ export default function SiteFooter() {
             <h3 className="mb-4 text-sm font-bold text-slate-900">탐색</h3>
             <ul className="space-y-3 text-sm text-slate-600">
               <li><Link href="/recommendations" className="hover:text-slate-900">일자리 맞춤 추천</Link></li>
-              <li><Link href="/gigs" className="hover:text-slate-900">가벼운 일거리</Link></li>
+              <li><Link href="/saved-jobs" className="hover:text-slate-900">관심 공고</Link></li>
               <li><Link href="/support" className="hover:text-slate-900">경기도 지원금 안내</Link></li>
             </ul>
           </div>

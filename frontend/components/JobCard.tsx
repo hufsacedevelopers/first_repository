@@ -1,3 +1,5 @@
+"use client";
+
 import { Job } from "@/types";
 import Link from "next/link";
 

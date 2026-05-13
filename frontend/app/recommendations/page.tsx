@@ -1,4 +1,5 @@
 import JobCard from "@/components/JobCard";
+import { DISABILITY_FILTER, computeDisabilityMatchPercent } from "@/lib/disability-match";
 import { getJobs } from "@/lib/data";
 import { Job } from "@/types";
 
@@ -26,21 +27,6 @@ const DISABILITY_FILTER_COPY: Record<string, string> = {
   발달장애:
     "복잡한 대인관계 스트레스가 낮은 역할·규칙적인 업무를 우선 고려합니다. 제공되는 근무환경 항목 범위 안에서는 중량물·장시간 기립 부담이 상대적으로 낮은 공고를 보여 줍니다.",
   기타: "환경 조건과 무관하게 전체 공고를 표시합니다.",
-};
-
-// env 필드 기반 장애 유형 접근성 판단
-// "해당 조건이 부담이 낮다" = 해당 장애 유형 구직자에게 적합
-const DISABILITY_FILTER: Record<string, (job: Job) => boolean> = {
-  지체장애: (job) =>
-    job.envStndWalk !== "오랫동안 가능",
-  시각장애: (job) =>
-    job.envEyesight !== "아주 작은 글씨를 읽을 수 있음",
-  청각장애: (job) =>
-    job.envLstnTalk !== "듣고 말하기에 어려움 없음",
-  발달장애: (job) =>
-    (!job.envLiftPower || !job.envLiftPower.includes("20Kg")) &&
-    job.envStndWalk !== "오랫동안 가능",
-  기타: () => true,
 };
 
 function matchesFilter(
@@ -73,6 +59,12 @@ export default async function RecommendationsPage({ searchParams }: Recommendati
   const filteredJobs = jobs.filter((job) =>
     matchesFilter(job, region, employmentType, disabilityType, keyword)
   );
+
+  const jobsForCards = filteredJobs.map((job) => ({
+    ...job,
+    matchPercent:
+      computeDisabilityMatchPercent(job, disabilityType) ?? job.matchPercent,
+  }));
 
   const hasFilter = !!(region || employmentType || disabilityType || keyword);
 
@@ -184,7 +176,7 @@ export default async function RecommendationsPage({ searchParams }: Recommendati
 
           {filteredJobs.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {filteredJobs.map((job) => (
+              {jobsForCards.map((job) => (
                 <JobCard key={job.id} job={job} />
               ))}
             </div>

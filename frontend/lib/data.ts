@@ -139,7 +139,22 @@ export async function getJobById(id: string): Promise<Job | null> {
   const idx = parseInt(id, 10);
   if (isNaN(idx) || idx < 0) return null;
 
-  const keadJobs = await getMergedKeadJobs(Math.max(PAGE_SIZE, idx + 1));
+  /** 목록 `getJobs()`와 동일한 우선순위로 조회해 카드의 id와 상세 내용이 일치하도록 함 */
+  const fetchCount = Math.max(PAGE_SIZE, idx + 1);
+
+  if (shouldUseApi()) {
+    try {
+      const mergedFromBackend = await api.liveJobsMerged(1, fetchCount);
+      if (mergedFromBackend.length > idx) {
+        const row = mergedFromBackend[idx];
+        return row ? { ...row, id: String(idx) } : null;
+      }
+    } catch (error) {
+      disableApiTemporarily(error);
+    }
+  }
+
+  const keadJobs = await getMergedKeadJobs(1, fetchCount);
   if (keadJobs.length > idx) {
     return keadJobs[idx] ?? null;
   }
@@ -151,7 +166,6 @@ export async function getJobById(id: string): Promise<Job | null> {
 
   try {
     const jobs = await api.liveJobsWithEnv(page, PAGE_SIZE);
-    // ID는 전체 배열 기준 인덱스이므로 재계산
     return jobs[localIdx]
       ? { ...jobs[localIdx], id: String(idx) }
       : null;
