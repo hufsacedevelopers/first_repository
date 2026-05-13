@@ -35,7 +35,10 @@
       "Bash(Get-ChildItem -Path \"C:\\\\first_repository\\\\backend\" -Recurse -Force)",
       "Bash(Select-Object -Property FullName, PSIsContainer)",
       "Bash(Sort-Object FullName)",
-      "Bash(ConvertTo-Json -Depth 50)"
+      "Bash(ConvertTo-Json -Depth 50)",
+      "Bash(Get-ChildItem -Path \"C:\\\\first_repository\\\\frontend\\\\src\" -Recurse -File)",
+      "PowerShell(head *)",
+      "PowerShell(ls -Recurse \"C:\\\\first_repository\\\\frontend\" -File -Name | Where-Object { $_ -eq \"middleware.ts\" -or $_ -eq \"middleware.js\" })"
     ]
   }
 }

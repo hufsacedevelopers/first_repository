@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from datetime import datetime, timezone
 from typing import Any
 
@@ -32,7 +33,21 @@ def _clamp(value: int, low: int, high: int) -> int:
     return max(low, min(high, value))
 
 
+_companies_payload_cache: dict[int, tuple[float, dict[str, Any]]] = {}
+_COMPANIES_PAYLOAD_TTL_SEC = 90.0
+
+
 def build_companies_payload(limit: int = 24) -> dict[str, Any]:
+    now = time.monotonic()
+    hit = _companies_payload_cache.get(limit)
+    if hit and (now - hit[0]) < _COMPANIES_PAYLOAD_TTL_SEC:
+        return hit[1]
+    payload = _build_companies_payload_uncached(limit)
+    _companies_payload_cache[limit] = (time.monotonic(), payload)
+    return payload
+
+
+def _build_companies_payload_uncached(limit: int = 24) -> dict[str, Any]:
     static_companies = get_companies_data()
     if not static_companies:
         static_companies = [
@@ -56,7 +71,7 @@ def build_companies_payload(limit: int = 24) -> dict[str, Any]:
                 "data": static_companies,
             }
 
-        live_jobs = fetch_live_jobs_merged(page_no=1, num_of_rows=300).get("data", [])
+        live_jobs = fetch_live_jobs_merged(page_no=1, num_of_rows=200).get("data", [])
         job_count_by_company: dict[str, int] = {}
         employment_types_by_company: dict[str, set[str]] = {}
         for job in live_jobs:

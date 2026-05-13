@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import time
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 from xml.etree import ElementTree
 
@@ -7,6 +9,12 @@ import requests
 from fastapi import HTTPException
 
 from app.core.config import settings
+
+# 짧은 TTL로 동일 파라미터 반복 호출(목록·인사이트 등) 시 외부 API 부하 감소
+_MERGED_CACHE: dict[tuple[int, int], tuple[float, dict[str, Any]]] = {}
+_MERGED_TTL_SEC = 60.0
+_COMPARISON_CACHE: dict[tuple[int, int], tuple[float, dict[str, Any]]] = {}
+_COMPARISON_TTL_SEC = 30.0
 
 
 def _text(item: ElementTree.Element, tag: str) -> str:
@@ -228,6 +236,12 @@ def _merge_key(item: dict[str, str]) -> str:
 
 
 def fetch_live_jobs_merged(page_no: int = 1, num_of_rows: int = 20) -> dict[str, Any]:
+    cache_key = (page_no, num_of_rows)
+    now = time.monotonic()
+    hit = _MERGED_CACHE.get(cache_key)
+    if hit and (now - hit[0]) < _MERGED_TTL_SEC:
+        return hit[1]
+
     # 1회 호출 기준 최대 100건으로 끊어 멀티 페이지 조회
     page_size = 100
     target_count = max(1, num_of_rows)
@@ -242,8 +256,11 @@ def fetch_live_jobs_merged(page_no: int = 1, num_of_rows: int = 20) -> dict[str,
 
     for offset in range(page_count):
         current_page = page_no + offset
-        raw_body = _request_job_api_json("/job_list", current_page, page_size)
-        env_body = _request_job_api_json("/job_list_env", current_page, page_size)
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            raw_future = pool.submit(_request_job_api_json, "/job_list", current_page, page_size)
+            env_future = pool.submit(_request_job_api_json, "/job_list_env", current_page, page_size)
+            raw_body = raw_future.result()
+            env_body = env_future.result()
         collected_pages += 1
 
         raw_total = max(raw_total, int(raw_body.get("totalCount", 0) or 0))
@@ -268,7 +285,7 @@ def fetch_live_jobs_merged(page_no: int = 1, num_of_rows: int = 20) -> dict[str,
 
     merge_rate = round((matched_count / len(merged)) * 100, 1) if merged else 0.0
 
-    return {
+    result: dict[str, Any] = {
         "pageNo": page_no,
         "numOfRows": target_count,
         "totalCount": env_total or raw_total or len(merged),
@@ -284,18 +301,31 @@ def fetch_live_jobs_merged(page_no: int = 1, num_of_rows: int = 20) -> dict[str,
             "envTotalCount": env_total,
         },
     }
+    _MERGED_CACHE[cache_key] = (time.monotonic(), result)
+    return result
 
 
 def fetch_live_jobs_comparison(page_no: int = 1, num_of_rows: int = 1) -> dict[str, Any]:
-    raw_body = _request_job_api_json("/job_list", page_no, num_of_rows)
-    env_body = _request_job_api_json("/job_list_env", page_no, num_of_rows)
+    ck = (page_no, num_of_rows)
+    now = time.monotonic()
+    ch = _COMPARISON_CACHE.get(ck)
+    if ch and (now - ch[0]) < _COMPARISON_TTL_SEC:
+        return ch[1]
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        raw_future = pool.submit(_request_job_api_json, "/job_list", page_no, num_of_rows)
+        env_future = pool.submit(_request_job_api_json, "/job_list_env", page_no, num_of_rows)
+        raw_body = raw_future.result()
+        env_body = env_future.result()
     raw_total = int(raw_body.get("totalCount", 0) or 0)
     env_total = int(env_body.get("totalCount", 0) or 0)
     missing = max(0, raw_total - env_total)
     missing_rate = round((missing / raw_total) * 100, 1) if raw_total > 0 else 0.0
-    return {
+    out = {
         "jobListTotal": raw_total,
         "jobListEnvTotal": env_total,
         "missingEnvCount": missing,
         "missingEnvRate": missing_rate,
     }
+    _COMPARISON_CACHE[ck] = (time.monotonic(), out)
+    return out
