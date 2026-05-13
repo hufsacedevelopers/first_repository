@@ -17,29 +17,6 @@ const HOME_CATEGORIES = [
   { icon: "☎️", label: "공단 상담/신청 연결", href: "/support/consulting" },
 ] as const;
 
-const NEIGHBORHOODS = [
-  "성남시",
-  "용인시",
-  "수원시",
-  "고양시",
-  "화성시",
-  "부천시",
-  "안산시",
-  "안양시",
-  "남양주시",
-  "평택시",
-  "시흥시",
-  "파주시",
-  "김포시",
-  "의정부시",
-  "광주시",
-  "하남시",
-  "광명시",
-  "군포시",
-  "오산시",
-  "이천시",
-] as const;
-
 export function LandingHero({ liveJobsTotal }: LandingHeroProps) {
   return (
     <section className="relative pb-14 pt-4 md:pb-16 md:pt-8">
@@ -51,8 +28,8 @@ export function LandingHero({ liveJobsTotal }: LandingHeroProps) {
             홈에서 빠르게 탐색해보세요
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
-            검색어, 카테고리, 지역 칩으로 바로 시작하고 추천 화면에서 장애 유형별 상세 조건까지
-            이어집니다.
+            통합 검색·취업 도메인으로 바로 시작하고, 지역별 검색에서는 시·도부터 단계적으로 고를 수
+            있습니다. 추천 화면에서 장애 유형별 상세 조건까지 이어집니다.
           </p>
           {liveJobsTotal != null ? (
             <p className="mt-3 text-sm font-medium tabular-nums text-primary-700">
@@ -116,22 +93,8 @@ export function LandingHero({ liveJobsTotal }: LandingHeroProps) {
             ))}
           </ul>
 
-          <ul className="mt-6 flex flex-wrap justify-center gap-2">
-            {NEIGHBORHOODS.map((name, index) => (
-              <li key={`${name}-${index}`}>
-                <Link
-                  href={`/jobs/regions?region=${encodeURIComponent(name)}`}
-                  className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-                >
-                  {name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
           <p className="mx-auto mt-6 max-w-xl text-center text-xs text-slate-500">
-            지역·기능을 고르면 추천 페이지에서 장애 유형, 고용 형태, 근무환경 조건으로 더
-            세밀하게 필터링할 수 있습니다.
+            추천 페이지에서 장애 유형, 고용 형태, 근무환경 조건으로 더 세밀하게 필터링할 수 있습니다.
           </p>
         </div>
 
