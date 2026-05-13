@@ -11,6 +11,7 @@ from app.services.company_rating_service import (
 )
 from app.services.data_service import get_companies_data
 from app.services.live_job_service import fetch_live_jobs_merged
+from app.services.company_name_normalize import normalize_company_name_key
 from app.services.standard_workplace_service import fetch_standard_workplaces
 
 
@@ -82,10 +83,13 @@ def _build_companies_payload_uncached(limit: int = 24) -> dict[str, Any]:
             name = str(job.get("businessName", "")).strip()
             if not name:
                 continue
-            job_count_by_company[name] = job_count_by_company.get(name, 0) + 1
+            nk = normalize_company_name_key(name)
+            if not nk:
+                continue
+            job_count_by_company[nk] = job_count_by_company.get(nk, 0) + 1
             employment = str(job.get("employmentType", "")).strip()
             if employment:
-                employment_types_by_company.setdefault(name, set()).add(employment)
+                employment_types_by_company.setdefault(nk, set()).add(employment)
 
         access_scores = get_access_scores()
 
@@ -103,8 +107,9 @@ def _build_companies_payload_uncached(limit: int = 24) -> dict[str, Any]:
                 continue
             seen.add(key)
 
-            job_count = job_count_by_company.get(name, 0)
-            type_count = len(employment_types_by_company.get(name, set()))
+            name_key = normalize_company_name_key(name)
+            job_count = job_count_by_company.get(name_key, 0)
+            type_count = len(employment_types_by_company.get(name_key, set()))
             access_score = match_access_score(location, access_scores) if access_scores else 0.0
 
             disabled_rate = round(min(10.0, 2.0 + (job_count * 0.45)), 1)

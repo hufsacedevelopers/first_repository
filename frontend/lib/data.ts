@@ -8,6 +8,11 @@ import {
 import { api, type LiveJobsMergedMeta } from "./api";
 import { companies as mockCompanies, jobs as mockJobs } from "./mockData";
 import { DEMO_RATING_METHODOLOGY } from "./methodologyDemo";
+import { normalizeCompanyNameKey } from "./company-name-normalize";
+import {
+  companyNameFromJobPoolId,
+  synthesizeCompanyFromJobPool,
+} from "./companies-job-pool";
 import { getKeadJobComparison, getMergedKeadJobs } from "./kead-jobs";
 
 const USE_MOCK = !(process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL);
@@ -212,7 +217,22 @@ export async function getJobById(id: string): Promise<Job | null> {
 
 export async function getCompanyById(id: string): Promise<Company | null> {
   const companies = await getCompanies();
-  return companies.find((c) => c.id === id) ?? null;
+  const fromList = companies.find((c) => c.id === id);
+  if (fromList) return fromList;
+
+  const poolName = companyNameFromJobPoolId(id);
+  if (!poolName) return null;
+
+  const jobs = await getJobs(500);
+  const targetKey = normalizeCompanyNameKey(poolName);
+  const rows = jobs.filter((j) => normalizeCompanyNameKey(j.companyName) === targetKey);
+  if (rows.length === 0) return null;
+
+  const apiCompanies = await getCompanies();
+  const apiHit = apiCompanies.find((c) => normalizeCompanyNameKey(c.companyName) === targetKey);
+  if (apiHit) return apiHit;
+
+  return synthesizeCompanyFromJobPool(poolName, rows);
 }
 
 export async function getLiveJobsTotal(): Promise<number> {

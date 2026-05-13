@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.services.company_name_normalize import normalize_company_name_key
+
 # 근무환경 6축 (구인 API env 필드 기준, UI·방법론과 동일 명칭)
 WORK_ENV_DIMENSION_LABELS_KO: tuple[str, ...] = (
     "서기",
@@ -79,9 +81,10 @@ def average_work_env_for_company(jobs: list[dict[str, Any]], company_name: str) 
     name = company_name.strip()
     if not name:
         return 0.0
+    name_key = normalize_company_name_key(name)
     scores: list[int] = []
     for j in jobs:
-        if str(j.get("businessName", "")).strip() != name:
+        if normalize_company_name_key(str(j.get("businessName", "") or "")) != name_key:
             continue
         if not any(
             j.get(k)

@@ -40,6 +40,11 @@ export default function CompanyScoreCard({ company }: CompanyScoreCardProps) {
             {company.industry ?? company.location}
             {company.industry ? ` · ${company.location}` : null}
           </p>
+          {company.derivedFromJobPool ? (
+            <p className="mt-1 text-xs text-slate-500">
+              일자리 공고 근무환경 기준 추정 · 표준사업장 상세 미연동
+            </p>
+          ) : null}
         </div>
         <div className="text-right">
           <div className="flex items-start justify-end gap-1">

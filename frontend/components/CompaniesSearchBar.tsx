@@ -52,7 +52,8 @@ export default function CompaniesSearchBar({
         </p>
       ) : (
         <p className="mt-3 text-xs text-slate-500">
-          배포 환경에서는 검색어를 입력한 뒤에만 공공 연동 기업 목록을 불러와 점수를 표시합니다.
+          검색 시 장애 유형별 일자리 검색과 동일한 구인 공고에서 추린 기업명에 대해, 백엔드 친화도 데이터가
+          있으면 우선 표시하고 없으면 공고 근무환경 점수로 추정합니다.
         </p>
       )}
     </div>

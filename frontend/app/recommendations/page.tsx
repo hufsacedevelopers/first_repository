@@ -165,6 +165,17 @@ export default async function RecommendationsPage({ searchParams }: Recommendati
               )}
             </div>
           </form>
+          <p className="mt-5 text-sm leading-relaxed text-slate-600">
+            아래 공고와{" "}
+            <a
+              href="/companies"
+              className="font-semibold text-primary-800 underline-offset-4 hover:underline"
+            >
+              기업 친화도 정량 평가
+            </a>
+            는 같은 구인 데이터 풀에서 기업명을 가져옵니다. 기업명으로 검색하면 친화도 점수를 비교할 수
+            있습니다.
+          </p>
         </section>
 
         <section className="mt-8 space-y-4">

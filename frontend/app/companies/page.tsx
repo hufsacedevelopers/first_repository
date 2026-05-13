@@ -1,7 +1,7 @@
 import CompanyListSection from "@/components/CompanyListSection";
 import CompaniesSearchBar from "@/components/CompaniesSearchBar";
-import { filterCompaniesByQuery } from "@/lib/companies-search";
-import { getCompaniesWithMeta, isDevCompanyDemoMode } from "@/lib/data";
+import { mergeCompaniesForJobPoolSearch } from "@/lib/companies-job-pool";
+import { getCompaniesWithMeta, getJobs, isDevCompanyDemoMode } from "@/lib/data";
 import type { ReactNode } from "react";
 import type { Company } from "@/types";
 
@@ -25,16 +25,16 @@ export default async function CompaniesPage({ searchParams }: Props) {
       }
     : await getCompaniesWithMeta();
 
-  const filtered = q ? filterCompaniesByQuery(result.companies, q) : result.companies;
-
-  /** 배포 사이트에서는 폴백 정적 목록일 때 '정적 데이터 · 검색' 칩을 숨김 */
-  const hideSourceBadge = !isDev && Boolean(q) && result.source === "static";
+  /** 일자리 검색(`getJobs`)과 동일한 공고 풀에서 기업명을 모아 API·추정 친화도 병합 */
+  const filtered = q
+    ? mergeCompaniesForJobPoolSearch(q, await getJobs(400), result.companies)
+    : result.companies;
 
   let badgeLabel: string | undefined;
   if (isDev) badgeLabel = "데모 데이터";
   else if (!q) badgeLabel = "기업명 검색 시 표시";
-  else if (result.source === "live") badgeLabel = "실시간 데이터 · 검색";
-  else if (!hideSourceBadge) badgeLabel = "정적 데이터 · 검색";
+  else if (result.source === "live") badgeLabel = "실시간 · 일자리 공고 동일 기업 풀";
+  else badgeLabel = "일자리 공고 기반 · 친화도 비교";
 
   let emptyState: ReactNode | null;
   if (filtered.length === 0) {
@@ -52,7 +52,8 @@ export default async function CompaniesPage({ searchParams }: Props) {
         <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-10 text-center">
           <p className="font-semibold text-slate-900">검색 결과가 없습니다</p>
           <p className="mt-2 text-sm text-slate-600">
-            다른 키워드를 시도해 보거나, 서버에서 내려주는 일부 기업 목록 범위 안에서만 일치합니다.
+            장애 유형별 일자리 검색에 노출되는 공고의 기업명과 같은 범위에서 찾습니다. 다른 키워드로
+            시도해 보세요.
           </p>
         </div>
       );
@@ -72,7 +73,6 @@ export default async function CompaniesPage({ searchParams }: Props) {
           source={result.source}
           syncedAt={result.syncedAt}
           badgeLabel={badgeLabel}
-          hideSourceBadge={hideSourceBadge}
           emptyState={emptyState ?? undefined}
         />
       </main>

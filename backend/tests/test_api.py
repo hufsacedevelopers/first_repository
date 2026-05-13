@@ -36,6 +36,14 @@ def test_rating_methodology():
     assert "workEnvDimensionsKo" in body
 
 
+def test_normalize_company_name_key_strips_corp_markers():
+    from app.services.company_name_normalize import normalize_company_name_key
+
+    assert normalize_company_name_key("(주)삼성전자") == normalize_company_name_key("삼성전자")
+    assert normalize_company_name_key("㈜네이버") == normalize_company_name_key("네이버")
+    assert normalize_company_name_key("주식회사 현대") == normalize_company_name_key("현대")
+
+
 def test_jobs_returns_list():
     res = client.get("/jobs")
     assert res.status_code == 200
